@@ -29,7 +29,7 @@ const Landing = () => {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold tracking-tight">SmartPay</span>
+            <span className="text-xl font-bold tracking-tight text-white">SmartPay</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -64,7 +64,7 @@ const Landing = () => {
               {" "}themselves
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              SmartPay uses machine learning to score every transaction in real-time, 
+              SmartPay uses machine learning to score every transaction in real-time,
               blocking fraud before it happens while keeping legitimate payments instant.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -74,7 +74,7 @@ const Landing = () => {
                 </Button>
               </Link>
               <Link to="/login">
-                <Button size="lg" variant="outline" className="border-muted-foreground/20 px-8 text-lg text-primary-foreground hover:bg-muted/10">
+                <Button size="lg" variant="outline" className="border-muted-foreground/20 px-8 text-lg text-black hover:bg-muted/10">
                   View Demo
                 </Button>
               </Link>
@@ -144,7 +144,7 @@ const Landing = () => {
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            <span className="font-semibold">SmartPay</span>
+            <span className="font-semibold text-white">SmartPay</span>
           </div>
           <p className="text-sm text-muted-foreground">© 2025 SmartPay. AI Smart Payment & Fraud Detection Platform.</p>
         </div>
