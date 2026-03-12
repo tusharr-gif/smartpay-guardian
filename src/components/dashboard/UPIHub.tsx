@@ -13,13 +13,24 @@ import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 
-const UPIHub = () => {
+interface UPIHubProps {
+    initialUpiId?: string;
+}
+
+const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
     const { currentUser, receiveMoney, users } = useApp();
     const [activeView, setActiveView] = useState<"pay" | "qr" | "manage">("pay");
-    const [upiInput, setUpiInput] = useState("");
+    const [upiInput, setUpiInput] = useState(initialUpiId);
     const [amount, setAmount] = useState("");
     const [riskScore, setRiskScore] = useState(2);
     const [isTrusted, setIsTrusted] = useState(false);
+
+    useEffect(() => {
+        if (initialUpiId) {
+            setUpiInput(initialUpiId);
+            setActiveView("pay");
+        }
+    }, [initialUpiId]);
 
     useEffect(() => {
         // Mock risk score calculation based on input

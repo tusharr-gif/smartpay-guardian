@@ -14,6 +14,8 @@ import BillsHub from "@/components/dashboard/BillsHub";
 import RewardsCenter from "@/components/dashboard/RewardsCenter";
 import MerchantHub from "@/components/dashboard/MerchantHub";
 import BottomNav from "@/components/dashboard/BottomNav";
+import QRScanner from "@/components/dashboard/QRScanner";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 const desktopTabs = [
@@ -32,6 +34,8 @@ type TabId = typeof desktopTabs[number]["id"];
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<TabId>("wallet");
+  const [showScanner, setShowScanner] = useState(false);
+  const [scannedUpi, setScannedUpi] = useState("");
   const { currentUser, logout, fraudAlerts } = useApp();
   const navigate = useNavigate();
 
@@ -45,12 +49,29 @@ const Dashboard = () => {
     return null;
   }
 
+  const handleQRScan = (data: string) => {
+    let upiId = data;
+    try {
+      if (data.startsWith("upi://pay")) {
+        const url = new URL(data.replace("upi://pay", "https://upi.com/pay"));
+        upiId = url.searchParams.get("pa") || data;
+      }
+    } catch (e) {
+      console.error("Error parsing QR data", e);
+    }
+    
+    setScannedUpi(upiId);
+    setShowScanner(false);
+    setActiveTab("upi");
+    toast.success(`Scanned: ${upiId}`);
+  };
+
   const unresolvedAlertsCount = fraudAlerts.filter(a => !a.resolved).length;
 
   const renderContent = () => {
     switch (activeTab) {
-      case "wallet": return <WalletSection />;
-      case "upi": return <UPIHub />;
+      case "wallet": return <WalletSection onScanClick={() => setShowScanner(true)} />;
+      case "upi": return <UPIHub initialUpiId={scannedUpi} />;
       case "bills": return <BillsHub />;
       case "merchant": return <MerchantHub />;
       case "rewards": return <RewardsCenter />;
@@ -199,9 +220,15 @@ const Dashboard = () => {
         setActiveTab={setActiveTab} 
         unresolvedAlerts={unresolvedAlertsCount} 
       />
+
+      {showScanner && (
+        <QRScanner 
+          onScan={handleQRScan} 
+          onClose={() => setShowScanner(false)} 
+        />
+      )}
     </div>
   );
 };
 
 export default Dashboard;
-

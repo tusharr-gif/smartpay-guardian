@@ -8,7 +8,11 @@ import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const WalletSection = () => {
+interface WalletSectionProps {
+  onScanClick: () => void;
+}
+
+const WalletSection = ({ onScanClick }: WalletSectionProps) => {
   const { currentUser, transactions, fraudAlerts } = useApp();
   if (!currentUser) return null;
 
@@ -19,7 +23,7 @@ const WalletSection = () => {
   const recentTx = userTx.slice(0, 5);
 
   const quickActions = [
-    { id: "scan", label: "Scan & Pay", icon: ScanLine, color: "bg-blue-500" },
+    { id: "scan", label: "Scan & Pay", icon: ScanLine, color: "bg-blue-500", action: onScanClick },
     { id: "send", label: "Send Money", icon: Send, color: "bg-purple-500" },
     { id: "request", label: "Request", icon: ArrowDownLeft, color: "bg-emerald-500" },
     { id: "bank", label: "Bank Transfer", icon: Landmark, color: "bg-orange-500" },
@@ -84,6 +88,7 @@ const WalletSection = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
+            onClick={() => action.action?.()}
             className="flex flex-col items-center gap-2"
           >
             <div className={cn(
@@ -96,6 +101,7 @@ const WalletSection = () => {
           </motion.button>
         ))}
       </div>
+
 
       {/* AI Fraud Alerts Card - If any */}
       {unresolvedAlerts.length > 0 && (
