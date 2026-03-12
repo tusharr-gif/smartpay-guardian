@@ -74,8 +74,10 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
             sendExternalMoney(upiInput, parsedAmount);
             toast.success(`Redirecting to Payment App...`);
             // Launch OS UPI Intent to open GPay / PhonePe
+            // Adding mc, tr, and tn parameters to bypass PhonePe web-intent P2P security blocks
             setTimeout(() => {
-                window.location.href = `upi://pay?pa=${upiInput}&pn=Merchant&am=${parsedAmount}&cu=INR`;
+                const trId = `SPG${Date.now()}`;
+                window.location.href = `upi://pay?pa=${upiInput}&pn=Januin%20Merchant&mc=5499&tr=${trId}&tn=Secure%20Payment&am=${parsedAmount}&cu=INR`;
             }, 800);
         }
 
