@@ -8,12 +8,14 @@ import SendMoney from "@/components/dashboard/SendMoney";
 import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import FraudAlerts from "@/components/dashboard/FraudAlerts";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
+import SecurityCenter from "@/components/dashboard/SecurityCenter";
 
 const tabs = [
   { id: "wallet", label: "Wallet", icon: Wallet },
-  { id: "send", label: "Send Money", icon: Send },
+  { id: "send", label: "Send", icon: Send },
+  { id: "security", label: "Security", icon: Shield },
   { id: "history", label: "Transactions", icon: History },
-  { id: "alerts", label: "Fraud Alerts", icon: AlertTriangle },
+  { id: "alerts", label: "AI Alerts", icon: AlertTriangle },
   { id: "settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -35,6 +37,7 @@ const Dashboard = () => {
     switch (activeTab) {
       case "wallet": return <WalletSection />;
       case "send": return <SendMoney />;
+      case "security": return <SecurityCenter />;
       case "history": return <TransactionHistory />;
       case "alerts": return <FraudAlerts />;
       case "settings": return <ProfileSettings />;
@@ -57,11 +60,10 @@ const Dashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-                activeTab === tab.id
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === tab.id
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              }`}
+                }`}
             >
               <tab.icon className="h-4.5 w-4.5" />
               {tab.label}
@@ -106,10 +108,11 @@ const Dashboard = () => {
             </h1>
             <p className="text-sm text-muted-foreground">
               {activeTab === "wallet" && "Overview of your wallet and recent activity"}
-              {activeTab === "send" && "Transfer money to another user"}
-              {activeTab === "history" && "All your transactions in one place"}
-              {activeTab === "alerts" && "AI-detected suspicious activity"}
-              {activeTab === "settings" && "Manage your profile and preferences"}
+              {activeTab === "send" && "Transfer money securely locally or globally"}
+              {activeTab === "security" && "AI Guardian protection and Behavioral Biometrics status"}
+              {activeTab === "history" && "All your transactions with AI risk scoring"}
+              {activeTab === "alerts" && "AI-detected suspicious activity and risk insights"}
+              {activeTab === "settings" && "Manage your profile and security preferences"}
             </p>
           </div>
         </div>

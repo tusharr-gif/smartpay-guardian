@@ -51,7 +51,21 @@ const TransactionHistory = () => {
                       {isSend ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownLeft className="h-4 w-4" />}
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-medium">{isSend ? tx.receiverName : tx.senderName}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2 font-medium">
+                      {isSend ? tx.receiverName : tx.senderName}
+                      {(() => {
+                        const name = isSend ? tx.receiverName : tx.senderName;
+                        if (name.includes("Sarah") || name.includes("Admin"))
+                          return <span className="inline-flex items-center gap-1 rounded-full bg-success/20 px-2 py-0.5 text-[9px] font-bold uppercase text-success tracking-wider"><Shield className="h-2.5 w-2.5" /> Verified</span>;
+                        if (name.includes("Alex"))
+                          return <span className="inline-flex items-center rounded-full bg-primary/20 px-2 py-0.5 text-[9px] font-bold uppercase text-primary tracking-wider">Trusted</span>;
+                        if (tx.riskScore > 80)
+                          return <span className="inline-flex items-center rounded-full bg-danger/20 px-2 py-0.5 text-[9px] font-bold uppercase text-danger tracking-wider">Suspicious</span>;
+                        return <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[9px] font-bold uppercase text-muted-foreground tracking-wider">New</span>;
+                      })()}
+                    </div>
+                  </td>
                   <td className={`px-6 py-4 font-mono font-semibold ${isSend ? "text-destructive" : "text-success"}`}>
                     {isSend ? "-" : "+"}${tx.amount.toLocaleString()}
                   </td>

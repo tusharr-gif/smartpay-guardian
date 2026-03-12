@@ -10,6 +10,7 @@ export interface User {
   walletBalance: number;
   isAdmin: boolean;
   createdAt: string;
+  trustLevel: "verified" | "new" | "trusted" | "suspicious";
 }
 
 export interface Transaction {
@@ -37,10 +38,10 @@ export interface FraudAlert {
 }
 
 const mockUsers: User[] = [
-  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "+1234567890", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15" },
-  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "+1234567891", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20" },
-  { id: "u3", name: "Mike Peters", email: "mike@example.com", phone: "+1234567892", avatar: "MP", walletBalance: 3100.00, isAdmin: false, createdAt: "2024-03-10" },
-  { id: "u4", name: "Admin User", email: "admin@smartpay.com", phone: "+1234567893", avatar: "AU", walletBalance: 50000.00, isAdmin: true, createdAt: "2024-01-01" },
+  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "+1234567890", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted" },
+  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "+1234567891", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified" },
+  { id: "u3", name: "Mike Peters", email: "mike@example.com", phone: "+1234567892", avatar: "MP", walletBalance: 3100.00, isAdmin: false, createdAt: "2024-03-10", trustLevel: "new" },
+  { id: "u4", name: "Admin User", email: "admin@smartpay.com", phone: "+1234567893", avatar: "AU", walletBalance: 50000.00, isAdmin: true, createdAt: "2024-01-01", trustLevel: "verified" },
 ];
 
 const mockTransactions: Transaction[] = [
@@ -102,6 +103,7 @@ export function useAppData() {
       walletBalance: 1000.00,
       isAdmin: false,
       createdAt: new Date().toISOString().split("T")[0],
+      trustLevel: "new",
     };
     setCurrentUser(newUser);
     return newUser;
@@ -140,7 +142,9 @@ export function useAppData() {
         userId: currentUser.id,
         userName: currentUser.name,
         riskScore,
-        reason: riskScore > 90 ? "Critical: Extreme risk detected" : "High risk transaction flagged",
+        reason: riskScore > 90
+          ? "Critical: Extremely high amount from unusual location detected by AI Guardian."
+          : "High risk: Abnormal transaction frequency spike flagged by Guardian Engine.",
         timestamp: now.toISOString(),
         resolved: false,
       };
