@@ -7,13 +7,37 @@ import { Label } from "@/components/ui/label";
 import { useApp } from "@/context/AppContext";
 import { toast } from "sonner";
 
+import { QRCodeSVG } from "qrcode.react";
+
 const UPIHub = () => {
-    const { currentUser } = useApp();
+    const { currentUser, sendMoney } = useApp();
     const [activeView, setActiveView] = useState<"manage" | "pay" | "qr">("manage");
     const [upiInput, setUpiInput] = useState("");
     const [amount, setAmount] = useState("");
 
     if (!currentUser) return null;
+
+    const upiUri = `upi://pay?pa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name)}&cu=USD`;
+
+    const simulateExternalPayment = () => {
+        if (!amount || parseFloat(amount) <= 0) {
+            toast.error("Set amount to simulate payment");
+            return;
+        }
+
+        toast.info("Opening external UPI app (GPay/PhonePe)...", { duration: 2000 });
+
+        setTimeout(() => {
+            // Mock receiving money from an external account
+            const tx = sendMoney(currentUser.email, parseFloat(amount));
+            if (tx) {
+                toast.success("Transaction Synced with SmartPay Ledger!", {
+                    description: `Received $${amount} via ${currentUser.upiId.split("@")[1]}`,
+                });
+                setAmount("");
+            }
+        }, 2500);
+    };
 
     const handlePay = () => {
         if (!upiInput.includes("@")) {
@@ -30,21 +54,15 @@ const UPIHub = () => {
                 <button
                     onClick={() => setActiveView("manage")}
                     className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${activeView === "manage" ? "bg-card shadow-sm" : "hover:bg-card/50"}`}
-                >
-                    Manage Banks
-                </button>
+                > Manage Banks </button>
                 <button
                     onClick={() => setActiveView("pay")}
                     className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${activeView === "pay" ? "bg-card shadow-sm" : "hover:bg-card/50"}`}
-                >
-                    Pay via UPI ID
-                </button>
+                > Pay UPI ID </button>
                 <button
                     onClick={() => setActiveView("qr")}
                     className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${activeView === "qr" ? "bg-card shadow-sm" : "hover:bg-card/50"}`}
-                >
-                    My QR
-                </button>
+                > My QR </button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -64,7 +82,7 @@ const UPIHub = () => {
                         </div>
 
                         <div className="grid gap-3">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Linked Bank Accounts</h4>
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Linked Banks</h4>
                             {currentUser.linkedBanks.map(bank => (
                                 <div key={bank.id} className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
                                     <div className="flex items-center gap-3">
@@ -102,34 +120,16 @@ const UPIHub = () => {
                             <div className="space-y-2">
                                 <Label className="text-xs">Payee UPI ID</Label>
                                 <div className="relative">
-                                    <Input
-                                        placeholder="name@bank"
-                                        value={upiInput}
-                                        onChange={e => setUpiInput(e.target.value)}
-                                        className="pr-10"
-                                    />
+                                    <Input placeholder="name@bank" value={upiInput} onChange={e => setUpiInput(e.target.value)} className="pr-10" />
                                     {upiInput.includes("@") && (
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                            <CheckCircle2 className="h-4 w-4 text-success" />
-                                        </div>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2"> <CheckCircle2 className="h-4 w-4 text-success" /> </div>
                                     )}
                                 </div>
-                                {upiInput.length > 5 && (
-                                    <div className="flex items-center gap-2 rounded-lg bg-success/10 p-2 text-[10px] text-success font-medium">
-                                        <ShieldCheck className="h-3 w-3" /> AI Validated: This ID matches a verified merchant
-                                    </div>
-                                )}
                             </div>
 
                             <div className="space-y-2">
                                 <Label className="text-xs">Amount (USD)</Label>
-                                <Input
-                                    type="number"
-                                    placeholder="0.00"
-                                    value={amount}
-                                    onChange={e => setAmount(e.target.value)}
-                                    className="font-mono text-lg"
-                                />
+                                <Input type="number" placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)} className="font-mono text-lg" />
                             </div>
 
                             <div className="rounded-xl border bg-muted/30 p-4">
@@ -150,34 +150,29 @@ const UPIHub = () => {
                     </motion.div>
                 )}
 
-                {activeView === "qr" && (activeView === "qr" && (
-                    <motion.div key="qr" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center text-center">
+                {activeView === "qr" && (
+                    <motion.div key="qr" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center">
                         <div className="relative mb-6 rounded-3xl border-8 border-primary/10 bg-white p-8 shadow-glow">
-                            {/* Simulating a QR code with CSS and symbols */}
-                            <div className="grid grid-cols-5 gap-1 p-2 bg-white">
-                                {Array.from({ length: 25 }).map((_, i) => (
-                                    <div key={i} className={`h-6 w-6 rounded-sm ${Math.random() > 0.4 ? "bg-black" : "bg-white"}`} />
-                                ))}
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px] opacity-0 hover:opacity-100 transition-opacity rounded-2xl">
-                                <QrCode className="h-12 w-12 text-primary animate-pulse" />
-                            </div>
+                            <QRCodeSVG value={upiUri} size={200} level="H" includeMargin={false} />
                         </div>
                         <h3 className="text-lg font-extrabold">{currentUser.name}</h3>
-                        <p className="text-sm text-muted-foreground">{currentUser.upiId}</p>
-                        <div className="mt-6 flex flex-wrap justify-center gap-3">
-                            <Button variant="outline" className="gap-2 rounded-full text-xs">
-                                <Copy className="h-3 w-3" /> Copy VPA
-                            </Button>
-                            <Button className="gradient-primary gap-2 rounded-full text-xs">
-                                <QrCode className="h-3 w-3" /> Download QR
+                        <p className="text-sm text-muted-foreground font-mono">{currentUser.upiId}</p>
+
+                        <div className="mt-8 space-y-4 w-full max-w-xs text-center">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold text-muted-foreground uppercase block">SIMULATE RECEIVING PAYMENT</Label>
+                                <Input type="number" placeholder="Enter amount to receive ($)" value={amount} onChange={e => setAmount(e.target.value)} className="text-center font-mono font-bold" />
+                            </div>
+                            <Button onClick={simulateExternalPayment} className="w-full gradient-primary rounded-full gap-2">
+                                <ArrowRight className="h-4 w-4" /> Simulate PhonePe / GPay Redirect
                             </Button>
                         </div>
+
                         <div className="mt-8 flex items-center gap-2 rounded-full bg-success/10 px-4 py-2 text-[10px] font-bold text-success">
-                            <ShieldCheck className="h-3 w-3" /> BHIM UPI SECURED
+                            <ShieldCheck className="h-3 w-3" /> BHIM UPI SECURED REDIRECTION
                         </div>
                     </motion.div>
-                ))}
+                )}
             </AnimatePresence>
         </div>
     );

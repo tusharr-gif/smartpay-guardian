@@ -1,16 +1,18 @@
 import { createContext, useContext, ReactNode } from "react";
-import { useAppData, User, Transaction, FraudAlert } from "@/lib/mockData";
+import { useAppData, User, Transaction, FraudAlert, Reward } from "@/lib/mockData";
 
 interface AppContextType {
   currentUser: User | null;
   users: User[];
   transactions: Transaction[];
   fraudAlerts: FraudAlert[];
+  rewards: Reward[];
   login: (email: string, password: string) => User | null;
   register: (name: string, email: string, password: string) => User;
   logout: () => void;
   sendMoney: (receiverEmail: string, amount: number) => Transaction | null;
   setCurrentUser: (user: User | null) => void;
+  scratchReward: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
