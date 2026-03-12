@@ -63,8 +63,22 @@ const SendMoney = () => {
             <p className="mt-1 text-sm text-muted-foreground">Transfer funds securely with AI Guardian protection</p>
             <form onSubmit={handleSend} className="mt-6 space-y-5">
               <div className="space-y-2">
-                <Label>Recipient Email</Label>
+                <Label>Recipient Mail</Label>
                 <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="sarah@example.com" required />
+                {email.includes("@") && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-2 flex items-center justify-between rounded-lg bg-muted/50 p-2 text-[10px]">
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${email.includes("sarah") || email.includes("admin") ? "bg-success" : "bg-warning"}`} />
+                      <span className="font-bold uppercase tracking-wider">AI Recipient Trust</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-primary">Score: {email.includes("sarah") || email.includes("admin") ? "98" : "45"}/100</span>
+                      <span className={`rounded px-1 text-[8px] font-black uppercase text-white ${email.includes("sarah") || email.includes("admin") ? "bg-success" : "bg-warning"}`}>
+                        {email.includes("sarah") || email.includes("admin") ? "Verified" : "New"}
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Amount (USD)</Label>
