@@ -3,6 +3,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { X, Zap, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import jsQR from "jsqr";
 
 interface QRScannerProps {
   onScan: (data: string) => void;
@@ -61,17 +62,34 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
     }
   };
 
-  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !scannerRef.current) return;
+    if (!file) return;
 
-    try {
-      const decodedText = await scannerRef.current.scanFile(file, false);
-      onScan(decodedText);
-    } catch (err) {
-      console.error("Image scan failed", err);
-      toast.error("Could not find a valid QR code in the image.");
-    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+          onScan(code.data);
+        } else {
+          toast.error("Could not find a valid QR code in the image.");
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
