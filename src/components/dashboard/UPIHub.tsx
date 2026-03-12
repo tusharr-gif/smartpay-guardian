@@ -18,7 +18,7 @@ interface UPIHubProps {
 }
 
 const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
-    const { currentUser, receiveMoney, users } = useApp();
+    const { currentUser, receiveMoney, sendMoney, sendExternalMoney, users } = useApp();
     const [activeView, setActiveView] = useState<"pay" | "qr" | "manage">("pay");
     const [upiInput, setUpiInput] = useState(initialUpiId);
     const [amount, setAmount] = useState("");
@@ -54,7 +54,8 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
             toast.error("Enter a valid UPI ID (e.g. name@januin)");
             return;
         }
-        if (!amount || parseFloat(amount) <= 0) {
+        const parsedAmount = parseFloat(amount);
+        if (!amount || parsedAmount <= 0) {
             toast.error("Enter a valid amount");
             return;
         }
@@ -64,7 +65,20 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
             return;
         }
 
-        toast.success(`Encrypted transaction initiated for ${upiInput}`);
+        const internalUser = users.find(u => u.upiId === upiInput);
+        
+        if (internalUser) {
+            sendMoney(internalUser.email, parsedAmount);
+            toast.success(`Encrypted transaction initiated for ${upiInput}`);
+        } else {
+            sendExternalMoney(upiInput, parsedAmount);
+            toast.success(`Redirecting to Payment App...`);
+            // Launch OS UPI Intent to open GPay / PhonePe
+            setTimeout(() => {
+                window.location.href = `upi://pay?pa=${upiInput}&pn=Merchant&am=${parsedAmount}&cu=INR`;
+            }, 800);
+        }
+
         setAmount("");
         setUpiInput("");
     };

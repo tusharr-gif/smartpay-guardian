@@ -197,6 +197,49 @@ export function useAppData() {
     return tx;
   };
 
+  const sendExternalMoney = (receiverUpiId: string, amount: number): Transaction | null => {
+    if (!currentUser) return null;
+    const now = new Date();
+    const riskScore = calculateFraudScore(amount, now.getHours(), transactions.filter(t => t.senderId === currentUser.id).length);
+    const status = riskScore > 70 ? "flagged" : "completed";
+
+    const tx: Transaction = {
+      id: `t${Date.now()}`,
+      senderId: currentUser.id,
+      senderName: currentUser.name,
+      receiverId: receiverUpiId,
+      receiverName: receiverUpiId.split('@')[0] || receiverUpiId,
+      amount,
+      timestamp: now.toISOString(),
+      riskScore,
+      status,
+      type: "send",
+    };
+
+    setTransactions(prev => [tx, ...prev]);
+
+    if (riskScore > 70) {
+      const alert: FraudAlert = {
+        id: `f${Date.now()}`,
+        transactionId: tx.id,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        riskScore,
+        reason: riskScore > 90
+          ? "Critical: Extremely high amount to external UPI detected by AI Guardian."
+          : "High risk: Abnormal transaction frequency spike flagged by Guardian Engine.",
+        timestamp: now.toISOString(),
+        resolved: false,
+      };
+      setFraudAlerts(prev => [alert, ...prev]);
+    }
+
+    if (status === "completed") {
+        currentUser.walletBalance -= amount;
+    }
+    return tx;
+  };
+
   const receiveMoney = (amount: number, senderName: string = "External UPI User"): Transaction | null => {
     if (!currentUser) return null;
     const now = new Date();
@@ -217,5 +260,6 @@ export function useAppData() {
     return tx;
   };
 
-  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, receiveMoney, setCurrentUser, scratchReward };
+  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward };
+
 }

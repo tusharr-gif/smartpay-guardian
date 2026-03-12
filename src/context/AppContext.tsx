@@ -11,6 +11,7 @@ interface AppContextType {
   register: (name: string, email: string, password: string) => User;
   logout: () => void;
   sendMoney: (receiverEmail: string, amount: number) => Transaction | null;
+  sendExternalMoney: (receiverUpiId: string, amount: number) => Transaction | null;
   receiveMoney: (amount: number, senderName?: string) => Transaction | null;
   setCurrentUser: (user: User | null) => void;
   scratchReward: (id: string) => void;
