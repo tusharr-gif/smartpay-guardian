@@ -153,8 +153,14 @@ const UPIHub = () => {
 
                 {activeView === "qr" && (
                     <motion.div key="qr" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center">
-                        <div className="relative mb-6 rounded-3xl border-8 border-primary/10 bg-white p-8 shadow-glow">
-                            <QRCodeSVG value={upiUri} size={200} level="H" includeMargin={false} />
+                        <div className="relative mb-6 rounded-3xl border-8 border-primary/10 bg-white p-8 shadow-glow text-center">
+                            <QRCodeSVG
+                                value={upiUri}
+                                size={220}
+                                level="M"
+                                includeMargin={true}
+                                marginSize={1}
+                            />
                         </div>
                         <h3 className="text-lg font-extrabold">{currentUser.name}</h3>
                         <p className="text-sm text-muted-foreground font-mono">{currentUser.upiId}</p>

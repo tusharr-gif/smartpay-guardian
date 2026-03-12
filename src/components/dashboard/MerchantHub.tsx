@@ -5,14 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/context/AppContext";
 import { toast } from "sonner";
+import { QRCodeSVG } from "qrcode.react";
 
 const MerchantHub = () => {
     const { currentUser } = useApp();
     const [activeTab, setActiveTab] = useState<"qr" | "links" | "analytics">("qr");
     const [linkAmount, setLinkAmount] = useState("");
     const [linkPurpose, setLinkPurpose] = useState("");
+    const [merchantAmount, setMerchantAmount] = useState("");
+    const [showAmountInput, setShowAmountInput] = useState(false);
 
     if (!currentUser) return null;
+
+    const upiUri = `upi://pay?pa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name)}&am=${merchantAmount}&cu=USD&tn=Merchant%20Payment`;
 
     return (
         <div className="space-y-6">
@@ -45,23 +50,45 @@ const MerchantHub = () => {
                 {activeTab === "qr" && (
                     <motion.div key="qr" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center">
                         <div className="p-8 bg-white rounded-3xl border-8 border-primary/20 shadow-glow mb-6">
-                            {/* Dynamically simulated QR block */}
-                            <div className="grid grid-cols-6 gap-0.5 p-1 bg-white">
-                                {Array.from({ length: 36 }).map((_, i) => (
-                                    <div key={i} className={`h-6 w-6 rounded-sm ${Math.random() > 0.4 ? "bg-black" : "bg-white"}`} />
-                                ))}
-                            </div>
+                            <QRCodeSVG
+                                value={upiUri}
+                                size={220}
+                                level="M"
+                                includeMargin={true}
+                                marginSize={1}
+                            />
                         </div>
                         <div className="text-center space-y-2">
                             <h3 className="text-lg font-bold">Dynamic UPI QR</h3>
                             <p className="text-xs text-muted-foreground">Customers can scan this to pay instantly</p>
+                            {merchantAmount && <p className="text-sm font-black text-primary">Amount: ${merchantAmount}</p>}
                         </div>
+
+                        {showAmountInput && (
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="w-full max-w-xs mt-4">
+                                <Input
+                                    type="number"
+                                    placeholder="Enter Amount"
+                                    value={merchantAmount}
+                                    onChange={(e) => setMerchantAmount(e.target.value)}
+                                    className="text-center font-bold"
+                                />
+                            </motion.div>
+                        )}
+
                         <div className="flex gap-3 mt-8 w-full max-w-sm">
-                            <Button className="flex-1 gradient-primary gap-2 h-10 text-xs">
-                                <Plus className="h-4 w-4" /> Add Amount
+                            <Button
+                                onClick={() => setShowAmountInput(!showAmountInput)}
+                                className="flex-1 gradient-primary gap-2 h-10 text-xs"
+                            >
+                                <Plus className="h-4 w-4" /> {merchantAmount ? "Change Amount" : "Add Amount"}
                             </Button>
-                            <Button variant="outline" className="flex-1 gap-2 h-10 text-xs text-primary border-primary/50">
-                                <Share2 className="h-4 w-4" /> Share QR
+                            <Button
+                                variant="outline"
+                                className="flex-1 gap-2 h-10 text-xs text-primary border-primary/50"
+                                onClick={() => { navigator.clipboard.writeText(upiUri); toast.success("UPI Intent Copied!"); }}
+                            >
+                                <Share2 className="h-4 w-4" /> Share Link
                             </Button>
                         </div>
                     </motion.div>
