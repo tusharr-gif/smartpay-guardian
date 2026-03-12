@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ChangeEvent } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { X, Zap, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 interface QRScannerProps {
   onScan: (data: string) => void;
@@ -42,22 +43,34 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
   const toggleFlash = async () => {
     if (scannerRef.current) {
         try {
-            // @ts-ignore
-            const track = scannerRef.current.getRunningTrack();
-            if (track) {
-                const capabilities = track.getCapabilities();
-                // @ts-ignore
-                if (capabilities.torch) {
-                    // @ts-ignore
-                    await track.applyConstraints({ advanced: [{ torch: !isFlashOn }] });
-                    setIsFlashOn(!isFlashOn);
-                } else {
-                    console.warn("Torch not supported on this device/browser");
-                }
-            }
+            await scannerRef.current.applyVideoConstraints({ advanced: [{ torch: !isFlashOn } as any] });
+            setIsFlashOn(!isFlashOn);
         } catch (err) {
-            console.error("Flash toggle failed", err);
+            console.error("Flash toggle failed via applyVideoConstraints", err);
+            try {
+                // Fallback directly on track
+                const track = (scannerRef.current as any).getRunningTrack();
+                if (track) {
+                    await track.applyConstraints({ advanced: [{ torch: !isFlashOn } as any] });
+                    setIsFlashOn(!isFlashOn);
+                }
+            } catch (fallbackErr) {
+               console.error("Fallback flash toggle failed", fallbackErr);
+            }
         }
+    }
+  };
+
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !scannerRef.current) return;
+
+    try {
+      const decodedText = await scannerRef.current.scanFile(file, false);
+      onScan(decodedText);
+    } catch (err) {
+      console.error("Image scan failed", err);
+      toast.error("Could not find a valid QR code in the image.");
     }
   };
 
@@ -111,9 +124,15 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
            <p className="text-white font-black text-[10px] uppercase tracking-tighter">AI Guardian Scanning Active</p>
         </div>
 
-        <button className="h-16 w-16 rounded-full bg-white/10 flex items-center justify-center text-white backdrop-blur-md active:scale-90 transition-all">
+        <label className="h-16 w-16 rounded-full bg-white/10 flex items-center justify-center text-white backdrop-blur-md active:scale-90 transition-all cursor-pointer">
           <ImageIcon className="h-6 w-6" />
-        </button>
+          <input 
+            type="file" 
+            accept="image/*" 
+            className="hidden" 
+            onChange={handleImageUpload} 
+          />
+        </label>
       </div>
 
       <div className="absolute bottom-36 inset-x-0 text-center pointer-events-none px-12">
