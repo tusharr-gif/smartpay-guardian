@@ -17,7 +17,8 @@ const MerchantHub = () => {
 
     if (!currentUser) return null;
 
-    const upiUri = `upi://pay?pa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name)}&am=${merchantAmount}&cu=USD&tn=Merchant%20Payment`;
+    const baseUrl = window.location.origin;
+    const checkoutUrl = `${baseUrl}/secure-pay?vpa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name + " Business")}&am=${merchantAmount}`;
 
     return (
         <div className="space-y-6">
@@ -51,7 +52,7 @@ const MerchantHub = () => {
                     <motion.div key="qr" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center">
                         <div className="p-8 bg-white rounded-3xl border-8 border-primary/20 shadow-glow mb-6">
                             <QRCodeSVG
-                                value={upiUri}
+                                value={checkoutUrl}
                                 size={220}
                                 level="M"
                                 includeMargin={true}
@@ -86,7 +87,7 @@ const MerchantHub = () => {
                             <Button
                                 variant="outline"
                                 className="flex-1 gap-2 h-10 text-xs text-primary border-primary/50"
-                                onClick={() => { navigator.clipboard.writeText(upiUri); toast.success("UPI Intent Copied!"); }}
+                                onClick={() => { navigator.clipboard.writeText(checkoutUrl); toast.success("Checkout Link Copied!"); }}
                             >
                                 <Share2 className="h-4 w-4" /> Share Link
                             </Button>
