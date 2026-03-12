@@ -20,9 +20,8 @@ const FraudAlerts = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
-          className={`rounded-2xl border p-6 shadow-card ${
-            alert.resolved ? "border-border bg-card" : "border-warning/30 bg-warning/5"
-          }`}
+          className={`rounded-2xl border p-6 shadow-card ${alert.resolved ? "border-border bg-card" : "border-warning/30 bg-warning/5"
+            }`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
