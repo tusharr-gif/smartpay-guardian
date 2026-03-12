@@ -52,8 +52,8 @@ const AdminDashboard = () => {
               <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Shield className="h-6 w-6 text-primary" /> Admin Dashboard
+              <h1 className="text-2xl font-bold flex items-center gap-3">
+                <img src="/logo.png" alt="Januin pay" className="h-8 w-8 object-contain" /> Admin Dashboard
               </h1>
               <p className="text-sm text-muted-foreground">Platform analytics and fraud monitoring</p>
             </div>
