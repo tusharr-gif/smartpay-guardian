@@ -35,22 +35,21 @@ const Register = () => {
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
           </Link>
-          <h1 className="text-2xl font-bold">Create your account</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Start with $1,000 in demo balance</p>
+          <h1 className="text-2xl font-bold">Name, Mail & Pass</h1>
         </div>
         <form onSubmit={handleRegister} className="space-y-5">
           <div className="space-y-2">
-            <Label>Full Name</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="John Doe" required />
+            <Label>Name</Label>
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Name" required />
           </div>
           <div className="space-y-2">
-            <Label>Email</Label>
-            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="john@example.com" required />
+            <Label>Mail</Label>
+            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Mail" required />
           </div>
           <div className="space-y-2">
-            <Label>Password</Label>
+            <Label>Pass</Label>
             <div className="relative">
-              <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min 6 characters" required />
+              <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Pass" required />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>

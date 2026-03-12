@@ -75,7 +75,7 @@ const Landing = () => {
               </Link>
               <Link to="/login">
                 <Button size="lg" variant="outline" className="border-muted-foreground/20 px-8 text-lg text-black hover:bg-muted/10">
-                  View Demo
+                  Open App
                 </Button>
               </Link>
             </div>

@@ -39,11 +39,11 @@ const Login = () => {
         </div>
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-2">
-            <Label>Email</Label>
+            <Label>Mail</Label>
             <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-2">
-            <Label>Password</Label>
+            <Label>Pass</Label>
             <div className="relative">
               <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -57,9 +57,7 @@ const Login = () => {
           Don't have an account?{" "}
           <Link to="/register" className="font-medium text-primary hover:underline">Sign up</Link>
         </div>
-        <div className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-          <strong>Demo:</strong> alex@example.com / any password — or admin@smartpay.com for admin
-        </div>
+
       </div>
     </div>
   );
