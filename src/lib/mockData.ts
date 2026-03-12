@@ -11,6 +11,33 @@ export interface User {
   isAdmin: boolean;
   createdAt: string;
   trustLevel: "verified" | "new" | "trusted" | "suspicious";
+  upiId: string;
+  linkedBanks: LinkedBank[];
+  points: number;
+}
+
+export interface LinkedBank {
+  id: string;
+  bankName: string;
+  accountNumber: string;
+  isPrimary: boolean;
+  balance: number;
+}
+
+export interface BillProvider {
+  id: string;
+  name: string;
+  category: "electricity" | "water" | "gas" | "recharge" | "broadband";
+  icon: string;
+}
+
+export interface Reward {
+  id: string;
+  title: string;
+  amount: number;
+  type: "cashback" | "voucher";
+  isScratched: boolean;
+  timestamp: string;
 }
 
 export interface Transaction {
@@ -38,10 +65,15 @@ export interface FraudAlert {
 }
 
 const mockUsers: User[] = [
-  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "+1234567890", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted" },
-  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "+1234567891", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified" },
-  { id: "u3", name: "Mike Peters", email: "mike@example.com", phone: "+1234567892", avatar: "MP", walletBalance: 3100.00, isAdmin: false, createdAt: "2024-03-10", trustLevel: "new" },
-  { id: "u4", name: "Admin User", email: "admin@smartpay.com", phone: "+1234567893", avatar: "AU", walletBalance: 50000.00, isAdmin: true, createdAt: "2024-01-01", trustLevel: "verified" },
+  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "9876543210", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted", upiId: "alex@smartpay", points: 450, linkedBanks: [{ id: "b1", bankName: "HDFC Bank", accountNumber: "****5521", isPrimary: true, balance: 8400 }] },
+  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "9876543211", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified", upiId: "sarah@smartpay", points: 820, linkedBanks: [{ id: "b2", bankName: "ICICI Bank", accountNumber: "****1120", isPrimary: true, balance: 12500 }] },
+];
+
+export const mockBills: BillProvider[] = [
+  { id: "bp1", name: "Adani Electricity", category: "electricity", icon: "Zap" },
+  { id: "bp2", name: "Airtel Fiber", category: "broadband", icon: "Globe" },
+  { id: "bp3", name: "Indane Gas", category: "gas", icon: "Flame" },
+  { id: "bp4", name: "Jio Prepaid", category: "recharge", icon: "Smartphone" },
 ];
 
 const mockTransactions: Transaction[] = [
@@ -83,6 +115,9 @@ export function useAppData() {
   const [users] = useState<User[]>(mockUsers);
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>(mockFraudAlerts);
+  const [rewards, setRewards] = useState<Reward[]>([
+    { id: "r1", title: "Monthly Cashback", amount: 25.50, type: "cashback", isScratched: false, timestamp: new Date().toISOString() }
+  ]);
 
   const login = (email: string, _password: string): User | null => {
     const user = users.find(u => u.email === email);
@@ -104,9 +139,16 @@ export function useAppData() {
       isAdmin: false,
       createdAt: new Date().toISOString().split("T")[0],
       trustLevel: "new",
+      upiId: `${name.toLowerCase().replace(/ /g, "")}@smartpay`,
+      points: 0,
+      linkedBanks: []
     };
     setCurrentUser(newUser);
     return newUser;
+  };
+
+  const scratchReward = (id: string) => {
+    setRewards(prev => prev.map(r => r.id === id ? { ...r, isScratched: true } : r));
   };
 
   const logout = () => setCurrentUser(null);
@@ -155,5 +197,5 @@ export function useAppData() {
     return tx;
   };
 
-  return { currentUser, users, transactions, fraudAlerts, login, register, logout, sendMoney, setCurrentUser };
+  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, setCurrentUser, scratchReward };
 }

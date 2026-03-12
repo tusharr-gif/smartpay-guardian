@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, Wallet, Send, History, AlertTriangle, Settings, LogOut, BarChart3, Home, Bell, User } from "lucide-react";
+import { Shield, Wallet, Send, History, AlertTriangle, Settings, LogOut, BarChart3, Home, Bell, User, Zap, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
 import WalletSection from "@/components/dashboard/WalletSection";
@@ -9,10 +9,17 @@ import TransactionHistory from "@/components/dashboard/TransactionHistory";
 import FraudAlerts from "@/components/dashboard/FraudAlerts";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import SecurityCenter from "@/components/dashboard/SecurityCenter";
+import UPIHub from "@/components/dashboard/UPIHub";
+import BillsHub from "@/components/dashboard/BillsHub";
+import RewardsCenter from "@/components/dashboard/RewardsCenter";
+import MerchantHub from "@/components/dashboard/MerchantHub";
 
 const tabs = [
-  { id: "wallet", label: "Wallet", icon: Wallet },
-  { id: "send", label: "Send", icon: Send },
+  { id: "wallet", label: "My Wallet", icon: Wallet },
+  { id: "upi", label: "UPI Payments", icon: Send },
+  { id: "bills", label: "Bills & Recharge", icon: Zap },
+  { id: "merchant", label: "Merchant Hub", icon: BarChart3 },
+  { id: "rewards", label: "Rewards", icon: Gift },
   { id: "security", label: "Security", icon: Shield },
   { id: "history", label: "Transactions", icon: History },
   { id: "alerts", label: "AI Alerts", icon: AlertTriangle },
@@ -36,7 +43,10 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "wallet": return <WalletSection />;
-      case "send": return <SendMoney />;
+      case "upi": return <UPIHub />;
+      case "bills": return <BillsHub />;
+      case "merchant": return <MerchantHub />;
+      case "rewards": return <RewardsCenter />;
       case "security": return <SecurityCenter />;
       case "history": return <TransactionHistory />;
       case "alerts": return <FraudAlerts />;
@@ -61,8 +71,8 @@ const Dashboard = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === tab.id
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                 }`}
             >
               <tab.icon className="h-4.5 w-4.5" />
@@ -107,12 +117,15 @@ const Dashboard = () => {
               {tabs.find(t => t.id === activeTab)?.label}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {activeTab === "wallet" && "Overview of your wallet and recent activity"}
-              {activeTab === "send" && "Transfer money securely locally or globally"}
-              {activeTab === "security" && "AI Guardian protection and Behavioral Biometrics status"}
-              {activeTab === "history" && "All your transactions with AI risk scoring"}
-              {activeTab === "alerts" && "AI-detected suspicious activity and risk insights"}
-              {activeTab === "settings" && "Manage your profile and security preferences"}
+              {activeTab === "wallet" && "Comprehensive overview of your assets and AI insights"}
+              {activeTab === "upi" && "Instant bank-to-bank transfers via BHIM UPI protocol"}
+              {activeTab === "bills" && "Secure utility bill payments and mobile recharges"}
+              {activeTab === "merchant" && "Business dashboard, Payment links and Dynamic QR"}
+              {activeTab === "rewards" && "Exciting cashback, scratch cards, and referral bonuses"}
+              {activeTab === "security" && "AI Guardian protection and behavioral biometrics status"}
+              {activeTab === "history" && "Complete ledger with deep AI risk analysis"}
+              {activeTab === "alerts" && "Real-time fraudulent activity monitoring"}
+              {activeTab === "settings" && "Manage your profiles and advanced security preferences"}
             </p>
           </div>
         </div>
