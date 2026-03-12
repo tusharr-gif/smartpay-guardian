@@ -26,8 +26,8 @@ const Landing = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl overflow-hidden bg-[#0a192f] border border-white/10 shadow-glow">
-              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-cover scale-[1.7]" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-[#0a192f] border border-white/5 shadow-glow">
+              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white">Januin pay</span>
           </Link>

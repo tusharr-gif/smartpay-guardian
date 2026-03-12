@@ -31,8 +31,8 @@ const Register = () => {
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-elevated">
         <div className="mb-8 text-center">
           <Link to="/" className="mb-4 inline-flex items-center gap-2">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl overflow-hidden bg-[#0a192f] border border-white/10 shadow-glow">
-              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-cover scale-[1.7]" />
+            <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] overflow-hidden bg-[#0a192f] border border-white/5 shadow-glow">
+              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
             </div>
           </Link>
           <h1 className="text-2xl font-bold">Name, Mail & Pass</h1>

@@ -59,8 +59,8 @@ const Dashboard = () => {
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 bottom-0 z-40 flex w-64 flex-col gradient-dark border-r border-sidebar-border">
         <div className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl overflow-hidden bg-[#0a192f] border border-white/10 shadow-glow">
-            <img src="/logo.png" alt="Januin pay" className="h-full w-full object-cover scale-[1.7]" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-[#0a192f] border border-white/5 shadow-glow">
+            <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
           </div>
           <span className="text-xl font-black tracking-tight text-sidebar-foreground italic">JANUIN</span>
         </div>
