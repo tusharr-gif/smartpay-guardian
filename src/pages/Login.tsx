@@ -30,8 +30,8 @@ const Login = () => {
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-elevated">
         <div className="mb-8 text-center">
           <Link to="/" className="mb-4 inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-primary">
-              <Shield className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg overflow-hidden bg-white/5 border border-white/10 p-2 shadow-glow">
+              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
             </div>
           </Link>
           <h1 className="text-2xl font-bold">Welcome back</h1>

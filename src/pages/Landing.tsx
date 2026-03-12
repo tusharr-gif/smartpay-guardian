@@ -26,8 +26,8 @@ const Landing = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Shield className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-white/5 border border-white/10 p-1.5 shadow-glow">
+              <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white">Januin pay</span>
           </Link>
@@ -143,7 +143,7 @@ const Landing = () => {
       <footer className="border-t border-border py-10">
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
+            <img src="/logo.png" alt="Januin pay" className="h-6 w-6 object-contain" />
             <span className="font-semibold text-white">Januin pay</span>
           </div>
           <p className="text-sm text-muted-foreground">© 2025 Januin pay. AI Smart Payment & Fraud Detection Platform.</p>

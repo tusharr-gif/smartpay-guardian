@@ -45,9 +45,9 @@ const SecureCheckout = () => {
                     <motion.div
                         initial={{ scale: 0.5, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="h-16 w-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/50 shadow-glow"
+                        className="h-20 w-20 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-glow p-3"
                     >
-                        <ShieldCheck className="h-10 w-10 text-primary" />
+                        <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
                     </motion.div>
                     <h1 className="text-xl font-black uppercase tracking-tighter">Januin pay Gateway</h1>
                     <p className="text-xs text-muted-foreground mt-1">Institutional-Grade Secure Redirection</p>
