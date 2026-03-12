@@ -14,8 +14,14 @@ import {
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
+import { Moon } from "lucide-react";
+
 const ProfileSettings = () => {
   const { currentUser, logout } = useApp();
+  const { theme, setTheme } = useTheme();
+
   if (!currentUser) return null;
 
   const sections = [
@@ -32,6 +38,12 @@ const ProfileSettings = () => {
       items: [
         { id: "banks", label: "Linked Banks", sub: "HDFC, ICICI, etc.", icon: CreditCard },
         { id: "upi", label: "UPI Settings", sub: "Manage VPA & QR", icon: Smartphone },
+      ]
+    },
+    {
+      title: "App Preferences",
+      items: [
+        { id: "theme", label: "Dark Mode", sub: "Toggle app appearance", icon: Moon, type: "switch" },
       ]
     },
     {
@@ -92,10 +104,10 @@ const ProfileSettings = () => {
            </h3>
            <div className="overflow-hidden rounded-[32px] border border-border bg-card shadow-sm">
              {section.items.map((item, i) => (
-               <button 
+               <div 
                  key={item.id}
                  className={cn(
-                   "flex w-full items-center justify-between p-4 transition-all active:bg-muted/30",
+                   "flex w-full items-center justify-between p-4 transition-all hover:bg-muted/10",
                    i !== section.items.length - 1 && "border-b border-border/50"
                  )}
                >
@@ -114,9 +126,16 @@ const ProfileSettings = () => {
                         {item.status}
                       </span>
                     )}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                    {item.type === "switch" && item.id === "theme" ? (
+                      <Switch 
+                        checked={theme === "dark"}
+                        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                      />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/50 cursor-pointer" />
+                    )}
                  </div>
-               </button>
+               </div>
              ))}
            </div>
         </div>

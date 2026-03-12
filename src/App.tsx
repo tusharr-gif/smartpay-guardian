@@ -14,24 +14,28 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+import { ThemeProvider } from "next-themes";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AppProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/secure-pay" element={<SecureCheckout />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AppProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AppProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/secure-pay" element={<SecureCheckout />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AppProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
