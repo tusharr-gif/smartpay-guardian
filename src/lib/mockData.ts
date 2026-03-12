@@ -197,5 +197,25 @@ export function useAppData() {
     return tx;
   };
 
-  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, setCurrentUser, scratchReward };
+  const receiveMoney = (amount: number, senderName: string = "External UPI User"): Transaction | null => {
+    if (!currentUser) return null;
+    const now = new Date();
+    const tx: Transaction = {
+      id: `t${Date.now()}`,
+      senderId: "external",
+      senderName,
+      receiverId: currentUser.id,
+      receiverName: currentUser.name,
+      amount,
+      timestamp: now.toISOString(),
+      riskScore: 2, // QR incoming is generally low risk in this mockup
+      status: "completed",
+      type: "receive",
+    };
+    setTransactions(prev => [tx, ...prev]);
+    currentUser.walletBalance += amount;
+    return tx;
+  };
+
+  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, receiveMoney, setCurrentUser, scratchReward };
 }

@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
 const UPIHub = () => {
-    const { currentUser, sendMoney } = useApp();
+    const { currentUser, receiveMoney } = useApp();
     const [activeView, setActiveView] = useState<"manage" | "pay" | "qr">("manage");
     const [upiInput, setUpiInput] = useState("");
     const [amount, setAmount] = useState("");
@@ -25,18 +25,19 @@ const UPIHub = () => {
             return;
         }
 
-        toast.info("Opening external UPI app (GPay/PhonePe)...", { duration: 2000 });
+        toast.info("Connecting to secure UPI gateway...", { duration: 1500 });
 
         setTimeout(() => {
-            // Mock receiving money from an external account
-            const tx = sendMoney(currentUser.email, parseFloat(amount));
+            // Mock receiving money from an external account via QR
+            const tx = receiveMoney(parseFloat(amount));
             if (tx) {
-                toast.success("Transaction Synced with SmartPay Ledger!", {
-                    description: `Received $${amount} via ${currentUser.upiId.split("@")[1]}`,
+                toast.success("Payment Received Successfully!", {
+                    description: `$${amount} credited to your account via QR Scan`,
+                    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
                 });
                 setAmount("");
             }
-        }, 2500);
+        }, 2000);
     };
 
     const handlePay = () => {
