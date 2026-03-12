@@ -62,7 +62,7 @@ const Dashboard = () => {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
             <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-sidebar-foreground">SmartPay</span>
+          <span className="text-lg font-bold text-sidebar-foreground">Januin pay</span>
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-4">

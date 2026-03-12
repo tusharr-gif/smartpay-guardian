@@ -42,7 +42,7 @@ const UPIHub = () => {
 
     const handlePay = () => {
         if (!upiInput.includes("@")) {
-            toast.error("Enter a valid UPI ID (e.g. name@smartpay)");
+            toast.error("Enter a valid UPI ID (e.g. name@januin)");
             return;
         }
         toast.success(`Encrypted transaction initiated for ${upiInput}`);

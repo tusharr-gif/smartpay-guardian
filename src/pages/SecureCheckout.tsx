@@ -11,7 +11,7 @@ const SecureCheckout = () => {
     const navigate = useNavigate();
     const { currentUser, receiveMoney } = useApp();
 
-    const vpa = searchParams.get("vpa") || "unknown@smartpay";
+    const vpa = searchParams.get("vpa") || "unknown@januin";
     const amount = searchParams.get("am") || "0.00";
     const name = searchParams.get("pn") || "Verified Merchant";
 
@@ -49,7 +49,7 @@ const SecureCheckout = () => {
                     >
                         <ShieldCheck className="h-10 w-10 text-primary" />
                     </motion.div>
-                    <h1 className="text-xl font-black uppercase tracking-tighter">SmartPay Gateway</h1>
+                    <h1 className="text-xl font-black uppercase tracking-tighter">Januin pay Gateway</h1>
                     <p className="text-xs text-muted-foreground mt-1">Institutional-Grade Secure Redirection</p>
                 </div>
 

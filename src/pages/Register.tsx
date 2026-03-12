@@ -22,7 +22,7 @@ const Register = () => {
       return;
     }
     register(name, email, password);
-    toast.success("Account created! Welcome to SmartPay.");
+    toast.success("Account created! Welcome to Januin pay.");
     navigate("/dashboard");
   };
 

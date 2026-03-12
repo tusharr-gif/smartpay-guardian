@@ -35,7 +35,7 @@ const Login = () => {
             </div>
           </Link>
           <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Sign in to your SmartPay account</p>
+          <p className="mt-1 text-sm text-muted-foreground">Sign in to your Januin pay account</p>
         </div>
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-2">

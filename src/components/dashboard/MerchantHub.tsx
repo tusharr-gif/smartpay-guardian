@@ -120,7 +120,7 @@ const MerchantHub = () => {
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold">Order #SC-889{i}</p>
-                                            <p className="text-[10px] text-muted-foreground font-mono">smartpay.li/sc-889{i}</p>
+                                            <p className="text-[10px] text-muted-foreground font-mono">januin.li/sc-889{i}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">

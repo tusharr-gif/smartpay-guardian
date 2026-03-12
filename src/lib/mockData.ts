@@ -65,8 +65,8 @@ export interface FraudAlert {
 }
 
 const mockUsers: User[] = [
-  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "9876543210", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted", upiId: "alex@smartpay", points: 450, linkedBanks: [{ id: "b1", bankName: "HDFC Bank", accountNumber: "****5521", isPrimary: true, balance: 8400 }] },
-  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "9876543211", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified", upiId: "sarah@smartpay", points: 820, linkedBanks: [{ id: "b2", bankName: "ICICI Bank", accountNumber: "****1120", isPrimary: true, balance: 12500 }] },
+  { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "9876543210", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted", upiId: "alex@januin", points: 450, linkedBanks: [{ id: "b1", bankName: "HDFC Bank", accountNumber: "****5521", isPrimary: true, balance: 8400 }] },
+  { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "9876543211", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified", upiId: "sarah@januin", points: 820, linkedBanks: [{ id: "b2", bankName: "ICICI Bank", accountNumber: "****1120", isPrimary: true, balance: 12500 }] },
 ];
 
 export const mockBills: BillProvider[] = [
@@ -139,7 +139,7 @@ export function useAppData() {
       isAdmin: false,
       createdAt: new Date().toISOString().split("T")[0],
       trustLevel: "new",
-      upiId: `${name.toLowerCase().replace(/ /g, "")}@smartpay`,
+      upiId: `${name.toLowerCase().replace(/ /g, "")}@januin`,
       points: 0,
       linkedBanks: []
     };

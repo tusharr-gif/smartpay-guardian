@@ -29,7 +29,7 @@ const Landing = () => {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-white">SmartPay</span>
+            <span className="text-xl font-bold tracking-tight text-white">Januin pay</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -64,7 +64,7 @@ const Landing = () => {
               {" "}themselves
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              SmartPay uses machine learning to score every transaction in real-time,
+              Januin pay uses machine learning to score every transaction in real-time,
               blocking fraud before it happens while keeping legitimate payments instant.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -130,7 +130,7 @@ const Landing = () => {
       <section className="gradient-dark py-20">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-primary-foreground md:text-4xl">Ready to secure your payments?</h2>
-          <p className="mt-4 text-muted-foreground">Join 12 million users who trust SmartPay</p>
+          <p className="mt-4 text-muted-foreground">Join 12 million users who trust Januin pay</p>
           <Link to="/register">
             <Button size="lg" className="mt-8 gradient-primary border-0 px-10 text-lg text-primary-foreground shadow-glow">
               Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
@@ -144,9 +144,9 @@ const Landing = () => {
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-white">SmartPay</span>
+            <span className="font-semibold text-white">Januin pay</span>
           </div>
-          <p className="text-sm text-muted-foreground">© 2025 SmartPay. AI Smart Payment & Fraud Detection Platform.</p>
+          <p className="text-sm text-muted-foreground">© 2025 Januin pay. AI Smart Payment & Fraud Detection Platform.</p>
         </div>
       </footer>
     </div>
