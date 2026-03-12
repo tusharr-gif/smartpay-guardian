@@ -53,8 +53,8 @@ const AdminDashboard = () => {
             </Link>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-[#0a192f] border border-white/10 p-1.5 shadow-sm">
-                  <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain scale-110" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl overflow-hidden bg-[#0a192f] border border-white/10 shadow-glow">
+                  <img src="/logo.png" alt="Januin pay" className="h-full w-full object-cover scale-[1.7]" />
                 </div> Admin Dashboard
               </h1>
               <p className="text-sm text-muted-foreground">Platform analytics and fraud monitoring</p>
