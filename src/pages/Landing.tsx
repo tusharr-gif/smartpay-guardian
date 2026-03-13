@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useApp } from "@/context/AppContext";
 import { motion } from "framer-motion";
 import { Shield, Zap, BarChart3, ArrowRight, Lock, Globe, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,15 @@ const stats = [
 ];
 
 const Landing = () => {
+  const { currentUser } = useApp();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate(currentUser.isAdmin ? "/admin" : "/dashboard");
+    }
+  }, [currentUser, navigate]);
+
   return (
     <div className="min-h-screen">
       {/* Nav */}

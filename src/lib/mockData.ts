@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Mock data store
 export interface User {
@@ -111,13 +111,24 @@ export function calculateFraudScore(amount: number, hour: number, frequency: num
 }
 
 export function useAppData() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem("januin_user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [users] = useState<User[]>(mockUsers);
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>(mockFraudAlerts);
   const [rewards, setRewards] = useState<Reward[]>([
     { id: "r1", title: "Monthly Cashback", amount: 25.50, type: "cashback", isScratched: false, timestamp: new Date().toISOString() }
   ]);
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("januin_user", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("januin_user");
+    }
+  }, [currentUser]);
 
   const login = (email: string, _password: string): User | null => {
     const user = users.find(u => u.email === email);

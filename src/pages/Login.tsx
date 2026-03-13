@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Shield, Smartphone, Key, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,14 @@ const Login = () => {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [isLoading, setIsLoading] = useState(false);
   const [generatedOtp, setGeneratedOtp] = useState("");
-  const { loginByPhone } = useApp();
+  const { currentUser, loginByPhone } = useApp();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate(currentUser.isAdmin ? "/admin" : "/dashboard");
+    }
+  }, [currentUser, navigate]);
 
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();

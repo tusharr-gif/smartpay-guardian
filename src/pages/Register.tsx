@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Shield, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,14 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { register } = useApp();
+  const { currentUser, register } = useApp();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate(currentUser.isAdmin ? "/admin" : "/dashboard");
+    }
+  }, [currentUser, navigate]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
