@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   QrCode, CreditCard, Plus, ArrowRight, ShieldCheck, AlertCircle, 
   CheckCircle2, Copy, Search, Users, Smartphone, Store, 
-  ShieldAlert, Info, InfoIcon, ShieldQuestion, UserCheck, Lock, Loader2, IndianRupee
+  ShieldAlert, Info, InfoIcon, ShieldQuestion, UserCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,11 +24,6 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
     const [amount, setAmount] = useState("");
     const [riskScore, setRiskScore] = useState(2);
     const [isTrusted, setIsTrusted] = useState(false);
-    
-    // In-App Payment Flow States
-    const [showPinScreen, setShowPinScreen] = useState(false);
-    const [enteredPin, setEnteredPin] = useState("");
-    const [paymentStatus, setPaymentStatus] = useState<"idle" | "verifying" | "success">("idle");
 
     useEffect(() => {
         if (initialUpiId) {
@@ -70,41 +65,28 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
             return;
         }
 
-        setShowPinScreen(true);
-    };
-
-    const confirmPayment = () => {
-        if (enteredPin.length !== 4 && enteredPin.length !== 6) {
-            toast.error("Please enter a valid 4 or 6 digit UPI PIN");
-            return;
+        const internalUser = users.find(u => u.upiId === upiInput);
+        
+        if (internalUser) {
+            sendMoney(internalUser.email, parsedAmount);
+            toast.success(`Encrypted transaction initiated for ${upiInput}`);
+        } else {
+            sendExternalMoney(upiInput, parsedAmount);
+            toast.success(`Redirecting to Payment App...`);
+            
+            // Clean Intent URI without merchant codes to avoid PhonePe business validation conflicts
+            const upiUrl = `upi://pay?pa=${upiInput}&am=${parsedAmount}&cu=INR`;
+            
+            // Launch OS Intent using programmatic anchor click (better browser support for intents)
+            const a = document.createElement("a");
+            a.href = upiUrl;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
-        setPaymentStatus("verifying");
-        
-        // Simulate NPCI Verification & Network Delay
-        setTimeout(() => {
-            const parsedAmount = parseFloat(amount);
-            const internalUser = users.find(u => u.upiId === upiInput);
-            
-            if (internalUser) {
-                sendMoney(internalUser.email, parsedAmount);
-            } else {
-                sendExternalMoney(upiInput, parsedAmount);
-            }
-            
-            setPaymentStatus("success");
-            toast.success("Payment Successful! Verified via NPCI.");
-            
-            // Auto close after success
-            setTimeout(() => {
-                setShowPinScreen(false);
-                setPaymentStatus("idle");
-                setEnteredPin("");
-                setAmount("");
-                setUpiInput("");
-            }, 3000);
-            
-        }, 2000);
+        setAmount("");
+        setUpiInput("");
     };
 
     const paymentMethods = [
@@ -116,107 +98,6 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
 
     return (
         <div className="space-y-6">
-            <AnimatePresence>
-                {showPinScreen && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: "100%" }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: "100%" }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-0 z-[200] flex flex-col bg-background/95 backdrop-blur-xl"
-                    >
-                        {/* Mock NPCI Gateway Header */}
-                        <div className="w-full bg-blue-600/10 p-4 border-b border-blue-600/20 text-center relative flex justify-center items-center">
-                            <Lock className="absolute left-4 h-5 w-5 text-blue-500" />
-                            <h2 className="text-blue-500 font-black tracking-widest text-xs uppercase flex items-center gap-2">
-                                <ShieldCheck className="h-4 w-4" /> Januin Secure Gateway
-                            </h2>
-                        </div>
-                        
-                        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                            {paymentStatus === "idle" ? (
-                                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-sm">
-                                    <div className="h-16 w-16 bg-muted rounded-full mx-auto mb-4 flex justify-center items-center">
-                                       <Store className="h-8 w-8 text-primary" />
-                                    </div>
-                                    <p className="text-muted-foreground font-medium text-sm">Paying securely to</p>
-                                    <h3 className="text-2xl font-black mb-1 truncate">{upiInput}</h3>
-                                    <div className="flex justify-center items-center text-4xl font-black text-primary font-mono mb-8">
-                                        <IndianRupee className="h-8 w-8 mr-1 stroke-[3]" /> {amount}
-                                    </div>
-                                    
-                                    <p className="text-xs font-bold text-muted-foreground uppercase mb-4 tracking-widest">Enter UPI PIN</p>
-                                    
-                                    <div className="flex justify-center gap-3 mb-10">
-                                        {[...Array(6)].map((_, i) => (
-                                            <div key={i} className={`h-4 w-4 rounded-full ${i < enteredPin.length ? "bg-primary" : "bg-muted border border-border"}`} />
-                                        ))}
-                                    </div>
-
-                                    {/* Mock Keypad */}
-                                    <div className="grid grid-cols-3 gap-4 w-full">
-                                        {[1,2,3,4,5,6,7,8,9].map(num => (
-                                            <button 
-                                                key={num} 
-                                                onClick={() => setEnteredPin(prev => prev.length < 6 ? prev + num : prev)}
-                                                className="h-16 text-2xl font-black rounded-2xl bg-muted/50 active:bg-muted active:scale-95 transition-all"
-                                            >
-                                                {num}
-                                            </button>
-                                        ))}
-                                        <button 
-                                            onClick={() => setEnteredPin(prev => prev.slice(0, -1))}
-                                            className="h-16 text-lg font-bold rounded-2xl text-danger active:bg-muted active:scale-95 transition-all flex justify-center items-center"
-                                        >
-                                            DEL
-                                        </button>
-                                        <button 
-                                            onClick={() => setEnteredPin(prev => prev.length < 6 ? prev + "0" : prev)}
-                                            className="h-16 text-2xl font-black rounded-2xl bg-muted/50 active:bg-muted active:scale-95 transition-all"
-                                        >
-                                            0
-                                        </button>
-                                        <button 
-                                            onClick={confirmPayment}
-                                            disabled={enteredPin.length < 4}
-                                            className={cn("h-16 rounded-2xl flex justify-center items-center active:scale-95 transition-all", enteredPin.length >= 4 ? "bg-primary text-white shadow-lg shadow-primary/30" : "bg-muted text-muted-foreground opacity-50")}
-                                        >
-                                            <CheckCircle2 className="h-8 w-8" />
-                                        </button>
-                                    </div>
-
-                                    <div className="mt-8 flex justify-center gap-6 text-muted-foreground">
-                                        <div className="flex flex-col items-center">
-                                            <p className="text-[10px] uppercase font-black tracking-widest">Powered by</p>
-                                            <p className="font-serif italic font-bold text-sm">NPCI</p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ) : paymentStatus === "verifying" ? (
-                                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center">
-                                    <div className="h-24 w-24 bg-primary/10 rounded-full flex justify-center items-center animate-pulse mb-6">
-                                        <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                                    </div>
-                                    <h3 className="text-xl font-black mb-2 text-primary">Verifying Payment...</h3>
-                                    <p className="text-sm font-medium text-muted-foreground">Securely communicating with your bank</p>
-                                </motion.div>
-                            ) : (
-                                <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center">
-                                    <div className="h-28 w-28 bg-success/20 rounded-full flex justify-center items-center mb-6 ring-8 ring-success/10">
-                                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}>
-                                            <CheckCircle2 className="h-16 w-16 text-success" />
-                                        </motion.div>
-                                    </div>
-                                    <h3 className="text-3xl font-black mb-2 text-success">₹{amount}</h3>
-                                    <p className="text-lg font-bold">Successfully Sent to</p>
-                                    <p className="text-sm font-medium text-muted-foreground max-w-[250px] truncate">{upiInput}</p>
-                                </motion.div>
-                            )}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Payment Method Grid - Mobile Optimization */}
             <div className="grid grid-cols-4 gap-4">
               {paymentMethods.map((method) => (
