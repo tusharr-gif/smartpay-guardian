@@ -43,7 +43,7 @@ const Login = () => {
       toast.success(`Welcome back, ${user.name}!`);
       navigate(user.isAdmin ? "/admin" : "/dashboard");
     } else {
-      toast.error("User not found. Try 9876543210");
+      toast.error("User not found with this number");
       setIsLoading(false);
     }
   };
@@ -77,10 +77,10 @@ const Login = () => {
                   </div>
                   <Input 
                     type="tel" 
-                    placeholder="98765 43210" 
+                    placeholder="MOBILE NUMBER" 
                     value={phone} 
                     onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} 
-                    className="h-16 pl-24 rounded-2xl text-lg font-black tracking-wider bg-background/50 focus-visible:ring-primary/20"
+                    className="h-16 pl-24 rounded-2xl text-lg font-black tracking-wider bg-background/50 focus-visible:ring-primary/20 placeholder:text-muted-foreground/30"
                     required 
                   />
                 </div>
