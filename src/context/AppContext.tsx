@@ -8,6 +8,7 @@ interface AppContextType {
   fraudAlerts: FraudAlert[];
   rewards: Reward[];
   login: (email: string, password: string) => User | null;
+  loginByPhone: (phone: string) => User | null;
   register: (name: string, email: string, password: string) => User;
   logout: () => void;
   sendMoney: (receiverEmail: string, amount: number) => Transaction | null;

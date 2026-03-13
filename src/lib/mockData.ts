@@ -128,6 +128,15 @@ export function useAppData() {
     return null;
   };
 
+  const loginByPhone = (phone: string): User | null => {
+    const user = users.find(u => u.phone === phone);
+    if (user) {
+      setCurrentUser(user);
+      return user;
+    }
+    return null;
+  };
+
   const register = (name: string, email: string, _password: string): User => {
     const newUser: User = {
       id: `u${Date.now()}`,
@@ -260,6 +269,6 @@ export function useAppData() {
     return tx;
   };
 
-  return { currentUser, users, transactions, fraudAlerts, rewards, login, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward };
+  return { currentUser, users, transactions, fraudAlerts, rewards, login, loginByPhone, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward };
 
 }
