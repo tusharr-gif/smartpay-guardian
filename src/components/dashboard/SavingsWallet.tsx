@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   PiggyBank, Target, ArrowLeft, Plus, History, 
   TrendingUp, ShieldCheck, Clock, Settings2, 
-  ChevronRight, ArrowRightCircle, Sparkles, CheckCircle2
+  ChevronRight, ArrowRightCircle, Sparkles, CheckCircle2,
+  ExternalLink, Smartphone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +17,13 @@ interface SavingsWalletProps {
 }
 
 const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
-  const { currentUser } = useApp();
+  const { currentUser, sendExternalMoney } = useApp();
   const [savingsBalance, setSavingsBalance] = useState(2540.50);
   const [isAutoPayEnabled, setIsAutoPayEnabled] = useState(true);
   const [autoPayAmount, setAutoPayAmount] = useState("500");
   const [showSetup, setShowSetup] = useState(false);
+  const [showAppChooser, setShowAppChooser] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"add" | "autopay" | null>(null);
 
   const savingsPortfolios = [
     { title: "Emergency Fund", balance: 1200, color: "from-blue-500/20 to-blue-500/5", icon: ShieldCheck },
@@ -28,9 +31,28 @@ const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
     { title: "Vacation", balance: 500, color: "from-amber-500/20 to-amber-500/5", icon: Sparkles },
   ];
 
-  const handleUpdateAutoPay = () => {
-    toast.success(`Auto-Pay updated to ₹${autoPayAmount}/month`);
-    setShowSetup(false);
+  const handleUpiRedirect = (appName: string) => {
+    const actionText = pendingAction === "add" ? "Adding Funds" : "Setting up Auto-Pay";
+    toast.info(`Redirecting to ${appName} for ${actionText}...`);
+    
+    // Simulate intent response
+    setTimeout(() => {
+        if(pendingAction === "add") {
+            setSavingsBalance(prev => prev + 500);
+            toast.success(`₹500 added to Savings via ${appName}`);
+        } else {
+            setIsAutoPayEnabled(true);
+            toast.success(`Auto-Pay mandate active on ${appName} for ₹${autoPayAmount}/mo`);
+        }
+        setShowAppChooser(false);
+        setPendingAction(null);
+    }, 2000);
+  };
+
+  const initiateUpiAction = (type: "add" | "autopay") => {
+    setPendingAction(type);
+    setShowAppChooser(true);
+    if (type === "autopay") setShowSetup(false);
   };
 
   return (
@@ -66,7 +88,10 @@ const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            <Button className="h-14 rounded-2xl font-black gradient-primary shadow-glow group">
+            <Button 
+                onClick={() => initiateUpiAction("add")}
+                className="h-14 rounded-2xl font-black gradient-primary shadow-glow group"
+            >
                 <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform" /> ADD FUNDS
             </Button>
             <Button variant="outline" className="h-14 rounded-2xl font-black border-2 border-primary/20 text-primary">
@@ -118,14 +143,14 @@ const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
             </div>
         ) : (
             <div className="py-4 text-center">
-                <p className="text-xs font-medium text-muted-foreground mb-4">Set up a monthly auto-savings plan to build wealth faster.</p>
+                <p className="text-xs font-medium text-muted-foreground mb-4">Set up a monthly auto-savings plan via UPI Mandate.</p>
                 <Button onClick={() => setShowSetup(true)} className="gradient-primary h-12 px-8 rounded-xl font-bold">ENABLE AUTO-SAVINGS</Button>
             </div>
         )}
 
         <div className="mt-4 flex items-center gap-2 px-2">
            <CheckCircle2 className="h-3 w-3 text-success" />
-           <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Next deduction: 1st April 2026</p>
+           <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Linked: {currentUser?.phone || "No Number linked"}</p>
         </div>
       </div>
 
@@ -145,7 +170,7 @@ const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
                className="w-full max-w-md bg-card rounded-[40px] border border-border p-8 shadow-2xl"
              >
                 <h3 className="text-xl font-black mb-2">Setup Auto-Savings</h3>
-                <p className="text-sm text-muted-foreground mb-8">Choose an amount to be automatically saved every month from your primary wallet.</p>
+                <p className="text-sm text-muted-foreground mb-8">This will create a monthly UPI Mandate in your preferred app.</p>
                 
                 <div className="space-y-6">
                     <div className="space-y-2">
@@ -175,8 +200,74 @@ const SavingsWallet = ({ onBack }: SavingsWalletProps) => {
 
                     <div className="pt-4 flex gap-3">
                         <Button variant="ghost" onClick={() => setShowSetup(false)} className="flex-1 h-14 rounded-2xl font-bold">CANCEL</Button>
-                        <Button onClick={handleUpdateAutoPay} className="flex-1 h-14 rounded-2xl font-black gradient-primary shadow-glow">CONFIRM SETUP</Button>
+                        <Button onClick={() => initiateUpiAction("autopay")} className="flex-1 h-14 rounded-2xl font-black gradient-primary shadow-glow flex items-center justify-center gap-2">
+                            PROCEED <ExternalLink className="h-4 w-4" />
+                        </Button>
                     </div>
+                </div>
+             </motion.div>
+           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* UPI App Chooser Modal */}
+      <AnimatePresence>
+        {showAppChooser && (
+           <motion.div 
+             initial={{ opacity: 0 }}
+             animate={{ opacity: 1 }}
+             exit={{ opacity: 0 }}
+             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+           >
+             <motion.div 
+               initial={{ y: 100 }}
+               animate={{ y: 0 }}
+               exit={{ y: 100 }}
+               className="w-full max-w-md bg-card rounded-[40px] border border-border p-8 shadow-2xl overflow-hidden relative"
+             >
+                <div className="mb-8 text-center">
+                    <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/20">
+                        <Smartphone className="h-10 w-10 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-black italic tracking-tighter uppercase">Choose UPI App</h3>
+                    <p className="text-xs font-bold text-muted-foreground mt-2 uppercase tracking-wide">Secure Redirect to external PSP</p>
+                </div>
+
+                <div className="space-y-4">
+                    {[
+                        { name: "PhonePe", icon: "🟣", color: "hover:bg-purple-500/10 hover:border-purple-500/30" },
+                        { name: "Google Pay", icon: "🔴", color: "hover:bg-red-500/10 hover:border-red-500/30" },
+                        { name: "Paytm", icon: "🔵", color: "hover:bg-blue-500/10 hover:border-blue-500/30" }
+                    ].map(app => (
+                        <button 
+                           key={app.name}
+                           onClick={() => handleUpiRedirect(app.name)}
+                           className={cn(
+                             "w-full flex items-center justify-between p-5 rounded-[24px] border border-border bg-muted/30 transition-all active:scale-[0.98] group",
+                             app.color
+                           )}
+                        >
+                            <div className="flex items-center gap-4">
+                                <span className="text-2xl">{app.icon}</span>
+                                <span className="font-black text-sm uppercase tracking-tight">{app.name}</span>
+                            </div>
+                            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </button>
+                    ))}
+                </div>
+
+                <Button 
+                    variant="ghost" 
+                    onClick={() => { setShowAppChooser(false); setPendingAction(null); }} 
+                    className="w-full mt-6 h-12 rounded-xl text-[10px] font-black uppercase text-muted-foreground hover:text-foreground"
+                >
+                    Cancel Transaction
+                </Button>
+
+                {/* Secure Badge */}
+                <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 bg-success/10 border border-success/20 rounded-full">
+                    <ShieldCheck className="h-3 w-3 text-success" />
+                    <span className="text-[8px] font-black text-success uppercase">NPCI Certified</span>
                 </div>
              </motion.div>
            </motion.div>
