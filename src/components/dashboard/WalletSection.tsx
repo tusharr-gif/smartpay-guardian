@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Wallet, ArrowUpRight, ArrowDownLeft, TrendingUp, Globe, 
   ScanLine, Send, Landmark, Plus, ShieldAlert,
-  ShieldCheck, ArrowRight, Wallet2, Smartphone, Zap, Tv, Home, Shield, Heart, Star, Lock, History
+  ShieldCheck, ArrowRight, Wallet2, Smartphone, Zap, Tv, Home, Shield, Heart, Star, Lock, History, PiggyBank
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,10 @@ import { toast } from "sonner";
 interface WalletSectionProps {
   onScanClick: () => void;
   onContactClick: () => void;
+  onSavingsClick: () => void;
 }
 
-const WalletSection = ({ onScanClick, onContactClick }: WalletSectionProps) => {
+const WalletSection = ({ onScanClick, onContactClick, onSavingsClick }: WalletSectionProps) => {
   const { currentUser, transactions, fraudAlerts } = useApp();
   const [balanceState, setBalanceState] = useState<"hidden" | "pin" | "visible">("hidden");
   const [pin, setPin] = useState("");
@@ -44,7 +45,7 @@ const WalletSection = ({ onScanClick, onContactClick }: WalletSectionProps) => {
     { id: "scan", label: "Scan QR", icon: ScanLine, color: "bg-blue-500", action: onScanClick },
     { id: "send", label: "To Contact", icon: Send, color: "bg-purple-500", action: onContactClick },
     { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-orange-500" },
-    { id: "self", label: "To Self", icon: Wallet2, color: "bg-emerald-500" },
+    { id: "savings", label: "Savings/EPF", icon: PiggyBank, color: "bg-emerald-500", action: onSavingsClick },
   ];
 
   const billActions = [
