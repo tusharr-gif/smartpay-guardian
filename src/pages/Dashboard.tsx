@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<TabId>("wallet");
   const [showScanner, setShowScanner] = useState(false);
   const [scannedUpi, setScannedUpi] = useState("");
+  const [scannedName, setScannedName] = useState("");
   const { currentUser, logout, fraudAlerts } = useApp();
   const navigate = useNavigate();
 
@@ -51,16 +52,19 @@ const Dashboard = () => {
 
   const handleQRScan = (data: string) => {
     let upiId = data;
+    let payeeName = "";
     try {
       if (data.startsWith("upi://pay")) {
         const url = new URL(data.replace("upi://pay", "https://upi.com/pay"));
         upiId = url.searchParams.get("pa") || data;
+        payeeName = url.searchParams.get("pn") || "";
       }
     } catch (e) {
       console.error("Error parsing QR data", e);
     }
     
     setScannedUpi(upiId);
+    setScannedName(payeeName);
     setShowScanner(false);
     setActiveTab("upi");
     toast.success(`Scanned: ${upiId}`);
@@ -71,7 +75,7 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "wallet": return <WalletSection onScanClick={() => setShowScanner(true)} />;
-      case "upi": return <UPIHub initialUpiId={scannedUpi} />;
+      case "upi": return <UPIHub initialUpiId={scannedUpi} initialPayeeName={scannedName} />;
       case "bills": return <BillsHub />;
       case "merchant": return <MerchantHub />;
       case "rewards": return <RewardsCenter />;

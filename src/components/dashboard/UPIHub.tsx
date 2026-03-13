@@ -15,12 +15,14 @@ import { cn } from "@/lib/utils";
 
 interface UPIHubProps {
     initialUpiId?: string;
+    initialPayeeName?: string;
 }
 
-const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
+const UPIHub = ({ initialUpiId = "", initialPayeeName = "" }: UPIHubProps) => {
     const { currentUser, receiveMoney, sendMoney, sendExternalMoney, users } = useApp();
     const [activeView, setActiveView] = useState<"pay" | "qr" | "manage">("pay");
     const [upiInput, setUpiInput] = useState(initialUpiId);
+    const [payeeName, setPayeeName] = useState(initialPayeeName);
     const [amount, setAmount] = useState("");
     const [riskScore, setRiskScore] = useState(2);
     const [isTrusted, setIsTrusted] = useState(false);
@@ -45,9 +47,10 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
     useEffect(() => {
         if (initialUpiId) {
             setUpiInput(initialUpiId);
+            setPayeeName(initialPayeeName);
             setActiveView("pay");
         }
-    }, [initialUpiId]);
+    }, [initialUpiId, initialPayeeName]);
 
     useEffect(() => {
         // Mock risk score calculation based on input
@@ -162,33 +165,74 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
                       exit={{ opacity: 0, y: -10 }} 
                       className="space-y-4"
                     >
-                        <div className="rounded-3xl border border-border bg-card p-6 shadow-card overflow-hidden relative">
-                            {/* AI Security Layer Header */}
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
+                        <div className="rounded-3xl border border-border bg-card shadow-card overflow-hidden relative">
+                            {/* STUNNING DOMINANT PAYEE / AI SCORE CARD */}
+                            <div className={cn(
+                                "flex flex-col gap-6 items-center justify-center p-6 border-b border-border/50 relative isolate",
+                                riskScore > 50 
+                                  ? "bg-gradient-to-b from-danger/20 via-background to-background" 
+                                  : "bg-gradient-to-b from-primary/20 via-background to-background"
+                            )}>
+                                {/* Glowing orb background effect */}
+                                <div className={cn(
+                                    "absolute top-0 w-full h-32 blur-3xl opacity-30 -z-10",
+                                    riskScore > 50 ? "bg-danger" : "bg-primary"
+                                )} />
+                                
+                                <div className="flex flex-col items-center gap-3 w-full">
                                     <div className={cn(
-                                      "flex h-10 w-10 items-center justify-center rounded-full font-bold transition-colors",
-                                      riskScore > 50 ? "bg-danger text-danger-foreground" : "bg-primary text-primary-foreground"
+                                        "w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black shadow-2xl ring-8 ring-background outline outline-4 outline-offset-0",
+                                        riskScore > 50 ? "bg-gradient-to-br from-danger/30 to-danger/10 text-danger outline-danger/30" : "bg-gradient-to-br from-primary/30 to-primary/10 text-primary outline-primary/30"
                                     )}>
-                                        {riskScore > 50 ? <ShieldAlert className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+                                        {payeeName ? payeeName.substring(0, 2).toUpperCase() : <UserCheck className="w-12 h-12" />}
                                     </div>
-                                    <div>
+                                    <div className="flex flex-col items-center text-center">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1">Paying Securely To</p>
+                                        <h2 className="text-2xl font-black leading-tight text-foreground px-4">
+                                            {payeeName ? decodeURIComponent(payeeName.replace(/\+/g, ' ')) : "Unknown Identity"}
+                                        </h2>
+                                    </div>
+                                </div>
+
+                                {/* Risk Score Gauge Row */}
+                                <div className="flex items-center justify-center gap-6 w-full max-w-sm mt-2">
+                                    <div className="flex flex-col items-end text-right">
                                         <h3 className="text-sm font-black">AI SafePay v4.2</h3>
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex items-center gap-1 justify-end">
                                           <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", riskScore > 50 ? "bg-danger" : "bg-success")} />
-                                          <p className="text-[10px] text-muted-foreground font-bold font-mono">ENCRYPTED CONNECTION</p>
+                                          <p className="text-[10px] text-muted-foreground font-bold font-mono">ENCRYPTED</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="h-12 w-[1px] bg-border/50 shrink-0" />
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="relative flex items-center justify-center">
+                                            <svg className="w-14 h-14 transform -rotate-90">
+                                                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-muted/30" />
+                                                <motion.circle 
+                                                    initial={{ strokeDasharray: "0 1000" }}
+                                                    animate={{ strokeDasharray: `${riskScore * 1.5} 1000` }}
+                                                    transition={{ duration: 1.5, ease: "easeOut" }}
+                                                    cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="4" fill="transparent" 
+                                                    strokeLinecap="round"
+                                                    className={cn(riskScore > 50 ? "text-danger" : "text-primary")}
+                                                />
+                                            </svg>
+                                            <div className="absolute flex flex-col items-center justify-center">
+                                                <span className={cn("text-base font-black leading-none", riskScore > 50 ? "text-danger" : "text-primary")}>
+                                                    {String(riskScore).padStart(2, '0')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col text-left">
+                                            <span className="text-[10px] font-black uppercase text-muted-foreground leading-tight">Risk<br/>Score</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                  <p className="text-[10px] uppercase font-black text-muted-foreground">Risk Score</p>
-                                  <p className={cn("text-lg font-black font-mono leading-none", riskScore > 50 ? "text-danger" : "text-success")}>
-                                    {String(riskScore).padStart(2, '0')}/100
-                                  </p>
-                                </div>
                             </div>
 
-                            <div className="space-y-4 relative z-10">
+                            <div className="space-y-4 relative z-10 p-6 pt-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Payee UPI ID / VPA</Label>
                                     <div className="relative">
