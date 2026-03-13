@@ -24,6 +24,23 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
     const [amount, setAmount] = useState("");
     const [riskScore, setRiskScore] = useState(2);
     const [isTrusted, setIsTrusted] = useState(false);
+    const [pendingPayment, setPendingPayment] = useState<{ upiId: string, amount: number } | null>(null);
+
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && pendingPayment) {
+                // Return to app after PhonePe/GPay flow - log as mock success!
+                sendExternalMoney(pendingPayment.upiId, pendingPayment.amount);
+                toast.success(`Payment Success: ₹${pendingPayment.amount} sent to ${pendingPayment.upiId}`);
+                setPendingPayment(null);
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [pendingPayment, sendExternalMoney]);
 
     useEffect(() => {
         if (initialUpiId) {
@@ -70,23 +87,29 @@ const UPIHub = ({ initialUpiId = "" }: UPIHubProps) => {
         if (internalUser) {
             sendMoney(internalUser.email, parsedAmount);
             toast.success(`Encrypted transaction initiated for ${upiInput}`);
+            setAmount("");
+            setUpiInput("");
         } else {
-            sendExternalMoney(upiInput, parsedAmount);
-            toast.success(`Redirecting to Payment App...`);
+            // Stage the payment locally so when the user returns from PhonePe, we confirm it
+            setPendingPayment({ upiId: upiInput, amount: parsedAmount });
+            toast.success(`Opening Payment Apps...`);
             
-            // Clean Intent URI without merchant codes to avoid PhonePe business validation conflicts
-            const upiUrl = `upi://pay?pa=${upiInput}&am=${parsedAmount}&cu=INR`;
+            // Universal UPI link format
+            const uri = `upi://pay?pa=${upiInput}&pn=Payee&am=${parsedAmount}&cu=INR`;
+            const isAndroid = /Android/i.test(navigator.userAgent || "");
             
-            // Launch OS Intent using programmatic anchor click (better browser support for intents)
-            const a = document.createElement("a");
-            a.href = upiUrl;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            if (isAndroid) {
+                // Highly strict Android Intent format ensures the OS Chooser pops up (GPay, PhonePe, Paytm, etc.)
+                const intentUrl = `intent://pay?pa=${upiInput}&pn=Payee&am=${parsedAmount}&cu=INR#Intent;scheme=upi;end`;
+                window.location.href = intentUrl;
+            } else {
+                // Fallback for iOS natively handling upi://
+                window.location.href = uri;
+            }
+            
+            setAmount("");
+            setUpiInput("");
         }
-
-        setAmount("");
-        setUpiInput("");
     };
 
     const paymentMethods = [
