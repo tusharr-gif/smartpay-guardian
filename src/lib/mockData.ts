@@ -129,12 +129,30 @@ export function useAppData() {
   };
 
   const loginByPhone = (phone: string): User | null => {
-    const user = users.find(u => u.phone === phone);
-    if (user) {
-      setCurrentUser(user);
-      return user;
+    const existingUser = users.find(u => u.phone === phone);
+    if (existingUser) {
+      setCurrentUser(existingUser);
+      return existingUser;
     }
-    return null;
+    
+    // Shadow Login: Create a temporary user for any new number
+    const newUser: User = {
+      id: `u${Date.now()}`,
+      name: `User ${phone.slice(-4)}`,
+      email: `${phone}@januin.com`,
+      phone,
+      avatar: "U",
+      walletBalance: 2500.00,
+      isAdmin: false,
+      createdAt: new Date().toISOString().split("T")[0],
+      trustLevel: "verified",
+      upiId: `${phone}@januin`,
+      points: 100,
+      linkedBanks: [{ id: `b${Date.now()}`, bankName: "Axis Bank", accountNumber: "****8822", isPrimary: true, balance: 15000 }]
+    };
+    
+    setCurrentUser(newUser);
+    return newUser;
   };
 
   const register = (name: string, email: string, _password: string): User => {

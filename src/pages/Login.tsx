@@ -13,6 +13,7 @@ const Login = () => {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [isLoading, setIsLoading] = useState(false);
+  const [generatedOtp, setGeneratedOtp] = useState("");
   const { loginByPhone } = useApp();
   const navigate = useNavigate();
 
@@ -23,18 +24,23 @@ const Login = () => {
       return;
     }
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call and generate dynamic OTP
     setTimeout(() => {
+      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedOtp(newOtp);
       setIsLoading(false);
       setStep("otp");
-      toast.success("OTP sent to your phone (123456)");
+      toast.success(`OTP sent! Your code is: ${newOtp}`, {
+        duration: 10000,
+        description: "In a real app, this would be an SMS.",
+      });
     }, 1500);
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp !== "123456") {
-      toast.error("Invalid OTP. Use 123456");
+    if (otp !== generatedOtp) {
+      toast.error("Invalid OTP. Please check the code sent to your mobile.");
       return;
     }
     setIsLoading(true);
