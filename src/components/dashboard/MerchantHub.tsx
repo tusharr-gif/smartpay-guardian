@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, Plus, QrCode, CreditCard, Link, Send, History, BarChart3, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Share2, Plus, QrCode, CreditCard, Link, Send, History, BarChart3, ShieldCheck, CheckCircle2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/context/AppContext";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
-const MerchantHub = () => {
+interface MerchantHubProps {
+    onContactClick?: () => void;
+}
+
+const MerchantHub = ({ onContactClick }: MerchantHubProps) => {
     const { currentUser } = useApp();
     const [activeTab, setActiveTab] = useState<"qr" | "links" | "analytics">("qr");
     const [linkAmount, setLinkAmount] = useState("");
@@ -104,9 +108,14 @@ const MerchantHub = () => {
                             <div className="space-y-3">
                                 <Input placeholder="Amount (USD)" value={linkAmount} onChange={e => setLinkAmount(e.target.value)} type="number" />
                                 <Input placeholder="Purpose (e.g. Freelance project)" value={linkPurpose} onChange={e => setLinkPurpose(e.target.value)} />
-                                <Button className="w-full gradient-primary h-10 text-xs" onClick={() => toast.success("Secure Payment Link Created!")}>
-                                    Generate Secure Link <Send className="ml-2 h-4 w-4" />
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button className="flex-1 gradient-primary h-10 text-xs" onClick={() => toast.success("Secure Payment Link Created!")}>
+                                        Generate Link <Send className="ml-2 h-4 w-4" />
+                                    </Button>
+                                    <Button variant="outline" className="flex-1 border-primary/30 text-primary h-10 text-xs" onClick={onContactClick}>
+                                        Share to Contact <Users className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
                         </div>
 

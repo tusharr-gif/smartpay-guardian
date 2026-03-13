@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, Wallet, Send, History, AlertTriangle, Settings, LogOut, BarChart3, Home, Bell, User, Zap, Gift, Search, QrCode, CreditCard, Landmark, ScanLine, ShieldAlert } from "lucide-react";
+import { Shield, Wallet, Send, History, AlertTriangle, Settings, LogOut, BarChart3, Home, Bell, User, Zap, Gift, Search, QrCode, CreditCard, Landmark, ScanLine, ShieldAlert, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
 import WalletSection from "@/components/dashboard/WalletSection";
@@ -13,6 +13,7 @@ import UPIHub from "@/components/dashboard/UPIHub";
 import BillsHub from "@/components/dashboard/BillsHub";
 import RewardsCenter from "@/components/dashboard/RewardsCenter";
 import MerchantHub from "@/components/dashboard/MerchantHub";
+import ContactsHub from "@/components/dashboard/ContactsHub";
 import BottomNav from "@/components/dashboard/BottomNav";
 import QRScanner from "@/components/dashboard/QRScanner";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ const desktopTabs = [
   { id: "security", label: "Security", icon: Shield },
   { id: "history", label: "Transactions", icon: History },
   { id: "alerts", label: "AI Alerts", icon: AlertTriangle },
+  { id: "contacts", label: "Contacts", icon: Users },
   { id: "settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -74,14 +76,15 @@ const Dashboard = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "wallet": return <WalletSection onScanClick={() => setShowScanner(true)} />;
-      case "upi": return <UPIHub initialUpiId={scannedUpi} initialPayeeName={scannedName} />;
+      case "wallet": return <WalletSection onScanClick={() => setShowScanner(true)} onContactClick={() => setActiveTab("contacts")} />;
+      case "upi": return <UPIHub initialUpiId={scannedUpi} initialPayeeName={scannedName} onContactClick={() => setActiveTab("contacts")} />;
       case "bills": return <BillsHub />;
-      case "merchant": return <MerchantHub />;
+      case "merchant": return <MerchantHub onContactClick={() => setActiveTab("contacts")} />;
       case "rewards": return <RewardsCenter />;
       case "security": return <SecurityCenter />;
       case "history": return <TransactionHistory />;
       case "alerts": return <FraudAlerts />;
+      case "contacts": return <ContactsHub onBack={() => setActiveTab("wallet")} />;
       case "settings": return <ProfileSettings />;
     }
   };

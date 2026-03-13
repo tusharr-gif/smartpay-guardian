@@ -13,9 +13,10 @@ import { toast } from "sonner";
 
 interface WalletSectionProps {
   onScanClick: () => void;
+  onContactClick: () => void;
 }
 
-const WalletSection = ({ onScanClick }: WalletSectionProps) => {
+const WalletSection = ({ onScanClick, onContactClick }: WalletSectionProps) => {
   const { currentUser, transactions, fraudAlerts } = useApp();
   const [balanceState, setBalanceState] = useState<"hidden" | "pin" | "visible">("hidden");
   const [pin, setPin] = useState("");
@@ -41,7 +42,7 @@ const WalletSection = ({ onScanClick }: WalletSectionProps) => {
 
   const quickActions = [
     { id: "scan", label: "Scan QR", icon: ScanLine, color: "bg-blue-500", action: onScanClick },
-    { id: "send", label: "To Contact", icon: Send, color: "bg-purple-500" },
+    { id: "send", label: "To Contact", icon: Send, color: "bg-purple-500", action: onContactClick },
     { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-orange-500" },
     { id: "self", label: "To Self", icon: Wallet2, color: "bg-emerald-500" },
   ];

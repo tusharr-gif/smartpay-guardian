@@ -16,9 +16,10 @@ import { cn } from "@/lib/utils";
 interface UPIHubProps {
     initialUpiId?: string;
     initialPayeeName?: string;
+    onContactClick?: () => void;
 }
 
-const UPIHub = ({ initialUpiId = "", initialPayeeName = "" }: UPIHubProps) => {
+const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UPIHubProps) => {
     const { currentUser, receiveMoney, sendMoney, sendExternalMoney, users } = useApp();
     const [activeView, setActiveView] = useState<"pay" | "qr" | "manage">("pay");
     const [upiInput, setUpiInput] = useState(initialUpiId);
@@ -129,7 +130,10 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "" }: UPIHubProps) => {
               {paymentMethods.map((method) => (
                 <button 
                   key={method.id} 
-                  onClick={() => method.id === "qr" && setActiveView("qr")}
+                  onClick={() => {
+                    if (method.id === "qr") setActiveView("qr");
+                    if (method.id === "contacts" || method.id === "phone") onContactClick?.();
+                  }}
                   className="flex flex-col items-center gap-2"
                 >
                   <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm transition-transform active:scale-95", method.color)}>

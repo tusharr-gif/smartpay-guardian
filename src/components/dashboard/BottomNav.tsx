@@ -1,4 +1,4 @@
-import { Home, Send, Gift, History, User } from "lucide-react";
+import { Home, Send, Gift, History, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BottomNavProps {
@@ -11,6 +11,7 @@ const BottomNav = ({ activeTab, setActiveTab, unresolvedAlerts = 0 }: BottomNavP
   const tabs = [
     { id: "wallet", label: "Home", icon: Home },
     { id: "upi", label: "Payments", icon: Send },
+    { id: "contacts", label: "Contacts", icon: Users },
     { id: "rewards", label: "Rewards", icon: Gift },
     { id: "history", label: "Activity", icon: History },
     { id: "settings", label: "Profile", icon: User },
