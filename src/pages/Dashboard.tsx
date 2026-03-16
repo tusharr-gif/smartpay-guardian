@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Shield, Wallet, Send, History, AlertTriangle, Settings, LogOut, BarChart3, Home, Bell, User, Zap, Gift, Search, QrCode, CreditCard, Landmark, ScanLine, ShieldAlert, Users, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
