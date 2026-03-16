@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from "react";
-import { useAppData, User, Transaction, FraudAlert, Reward } from "@/lib/mockData";
+import { useAppData, User, Transaction, FraudAlert, Reward, VerificationResult } from "@/lib/mockData";
 
 interface AppContextType {
   currentUser: User | null;
@@ -16,6 +16,7 @@ interface AppContextType {
   receiveMoney: (amount: number, senderName?: string) => Transaction | null;
   setCurrentUser: (user: User | null) => void;
   scratchReward: (id: string) => void;
+  verifyVpa: (vpa: string) => Promise<VerificationResult>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);

@@ -64,6 +64,18 @@ export interface FraudAlert {
   resolved: boolean;
 }
 
+export interface VerificationResult {
+  vpa: string;
+  registeredName: string;
+  bankName: string;
+  kycBadge: "Full Video KYC" | "Aadhar Verified" | "Basic";
+  heritageScore: string; // e.g. "Active since 2021"
+  transactionIntegrity: string; // e.g. "99.9% Success"
+  communitySafety: string; // e.g. "Zero Fraud Reports"
+  trustLevel: "trusted" | "verified" | "suspicious" | "flagged";
+  riskScore: number;
+}
+
 const mockUsers: User[] = [
   { id: "u1", name: "Alex Johnson", email: "alex@example.com", phone: "9876543210", avatar: "AJ", walletBalance: 12450.75, isAdmin: false, createdAt: "2024-01-15", trustLevel: "trusted", upiId: "alex@januin", points: 450, linkedBanks: [{ id: "b1", bankName: "HDFC Bank", accountNumber: "****5521", isPrimary: true, balance: 8400 }] },
   { id: "u2", name: "Sarah Chen", email: "sarah@example.com", phone: "9876543211", avatar: "SC", walletBalance: 8320.50, isAdmin: false, createdAt: "2024-02-20", trustLevel: "verified", upiId: "sarah@januin", points: 820, linkedBanks: [{ id: "b2", bankName: "ICICI Bank", accountNumber: "****1120", isPrimary: true, balance: 12500 }] },
@@ -298,6 +310,79 @@ export function useAppData() {
     return tx;
   };
 
-  return { currentUser, users, transactions, fraudAlerts, rewards, login, loginByPhone, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward };
+  const verifyVpa = async (vpa: string): Promise<VerificationResult> => {
+    // Artificial delay to simulate real API call
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 500));
+
+    // Specific Simulated Database
+    const simulatedRegistry: Record<string, Partial<VerificationResult>> = {
+        "tushar@pay": { registeredName: "Tushar Gupta", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2020" },
+        "fraud.alert@upi": { registeredName: "MUMBAI SPAM CENTER", trustLevel: "flagged", communitySafety: "24 Fraud Reports", heritageScore: "New (1 day old)", riskScore: 98 },
+        "starbucks@axis": { registeredName: "Tata Starbucks PVT LTD", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2012" },
+        "suspicious.user@okicici": { registeredName: "Ankit Unknown", trustLevel: "suspicious", communitySafety: "3 Reports", riskScore: 72 }
+    };
+
+    if (simulatedRegistry[vpa]) {
+        return {
+            vpa,
+            registeredName: "Verified User",
+            bankName: "HDFC Bank",
+            kycBadge: "Aadhar Verified",
+            heritageScore: "Active since 2022",
+            transactionIntegrity: "99.9% Success Rate",
+            communitySafety: "Zero Fraud Reports",
+            trustLevel: "verified",
+            riskScore: 10,
+            ...simulatedRegistry[vpa]
+        } as VerificationResult;
+    }
+
+    // Simple pattern matching for simulation fallback
+    const isSuspicious = vpa.includes("spam") || vpa.includes("fraud") || vpa.includes("666");
+    const isVerified = vpa.includes("merchant") || vpa.includes("store");
+
+    if (isSuspicious) {
+      return {
+        vpa,
+        registeredName: "Account Under Review",
+        bankName: "Unknown Bank",
+        kycBadge: "Basic",
+        heritageScore: "New Account (2 days)",
+        transactionIntegrity: "Unusual activity detected",
+        communitySafety: "7 Recent Reports",
+        trustLevel: "suspicious",
+        riskScore: 85
+      };
+    }
+
+    if (isVerified) {
+      return {
+        vpa,
+        registeredName: "Cloud Mart Solutions PVT LTD",
+        bankName: "HDFC Bank",
+        kycBadge: "Full Video KYC",
+        heritageScore: "Active since 2019",
+        transactionIntegrity: "99.9% Success Rate",
+        communitySafety: "Zero Fraud Reports",
+        trustLevel: "trusted",
+        riskScore: 5
+      };
+    }
+
+    // Default response for other IDs
+    return {
+      vpa,
+      registeredName: vpa.split('@')[0].replace(/\./g, ' ').toUpperCase(),
+      bankName: "Axis Bank",
+      kycBadge: "Aadhar Verified",
+      heritageScore: "Active since 2022",
+      transactionIntegrity: "High Volume (verified)",
+      communitySafety: "Zero Fraud Reports",
+      trustLevel: "verified",
+      riskScore: 12
+    };
+  };
+
+  return { currentUser, users, transactions, fraudAlerts, rewards, login, loginByPhone, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward, verifyVpa };
 
 }

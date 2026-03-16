@@ -169,139 +169,66 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                       exit={{ opacity: 0, y: -10 }} 
                       className="space-y-4"
                     >
-                        <div className="rounded-3xl border border-border bg-card shadow-card overflow-hidden relative">
-                            {/* STUNNING DOMINANT PAYEE / AI SCORE CARD */}
-                            <div className={cn(
-                                "flex flex-col gap-6 items-center justify-center p-6 border-b border-border/50 relative isolate",
-                                riskScore > 50 
-                                  ? "bg-gradient-to-b from-danger/20 via-background to-background" 
-                                  : "bg-gradient-to-b from-primary/20 via-background to-background"
-                            )}>
-                                {/* Glowing orb background effect */}
-                                <div className={cn(
-                                    "absolute top-0 w-full h-32 blur-3xl opacity-30 -z-10",
-                                    riskScore > 50 ? "bg-danger" : "bg-primary"
-                                )} />
-                                
-                                <div className="flex flex-col items-center gap-3 w-full">
-                                    <div className={cn(
-                                        "w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black shadow-2xl ring-8 ring-background outline outline-4 outline-offset-0",
-                                        riskScore > 50 ? "bg-gradient-to-br from-danger/30 to-danger/10 text-danger outline-danger/30" : "bg-gradient-to-br from-primary/30 to-primary/10 text-primary outline-primary/30"
-                                    )}>
-                                        {payeeName ? payeeName.substring(0, 2).toUpperCase() : <UserCheck className="w-12 h-12" />}
-                                    </div>
-                                    <div className="flex flex-col items-center text-center">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1">Paying Securely To</p>
-                                        <h2 className="text-2xl font-black leading-tight text-foreground px-4">
-                                            {payeeName ? decodeURIComponent(payeeName.replace(/\+/g, ' ')) : "Unknown Identity"}
-                                        </h2>
-                                    </div>
+                        <div className="rounded-[2.5rem] border border-border bg-card shadow-card overflow-hidden">
+                            {/* CLEAN RECIPIENT HEADER */}
+                            <div className="flex flex-col items-center justify-center p-8 pb-4">
+                                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-3xl font-black mb-4 border-4 border-background shadow-inner">
+                                    {payeeName ? payeeName.substring(0, 2).toUpperCase() : <UserCheck className="w-10 h-10" />}
                                 </div>
-
-                                {/* Risk Score Gauge Row */}
-                                <div className="flex items-center justify-center gap-6 w-full max-w-sm mt-2">
-                                    <div className="flex flex-col items-end text-right">
-                                        <h3 className="text-sm font-black">AI SafePay v4.2</h3>
-                                        <div className="flex items-center gap-1 justify-end">
-                                          <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", riskScore > 50 ? "bg-danger" : "bg-success")} />
-                                          <p className="text-[10px] text-muted-foreground font-bold font-mono">ENCRYPTED</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="h-12 w-[1px] bg-border/50 shrink-0" />
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="relative flex items-center justify-center">
-                                            <svg className="w-14 h-14 transform -rotate-90">
-                                                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-muted/30" />
-                                                <motion.circle 
-                                                    initial={{ strokeDasharray: "0 1000" }}
-                                                    animate={{ strokeDasharray: `${riskScore * 1.5} 1000` }}
-                                                    transition={{ duration: 1.5, ease: "easeOut" }}
-                                                    cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="4" fill="transparent" 
-                                                    strokeLinecap="round"
-                                                    className={cn(riskScore > 50 ? "text-danger" : "text-primary")}
-                                                />
-                                            </svg>
-                                            <div className="absolute flex flex-col items-center justify-center">
-                                                <span className={cn("text-base font-black leading-none", riskScore > 50 ? "text-danger" : "text-primary")}>
-                                                    {String(riskScore).padStart(2, '0')}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col text-left">
-                                            <span className="text-[10px] font-black uppercase text-muted-foreground leading-tight">Risk<br/>Score</span>
-                                        </div>
-                                    </div>
+                                <div className="text-center space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Paying To</p>
+                                    <h2 className="text-xl font-black text-foreground">
+                                        {payeeName ? decodeURIComponent(payeeName.replace(/\+/g, ' ')) : "Enter UPI ID"}
+                                    </h2>
+                                    
+                                    {upiInput.includes("@") && (
+                                      <div className="flex justify-center mt-2">
+                                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/10">
+                                              <ShieldCheck className="h-3 w-3 text-success" />
+                                              <span className="text-[9px] font-black uppercase text-success">Guardian Secured</span>
+                                          </div>
+                                      </div>
+                                    )}
                                 </div>
                             </div>
 
-                            <div className="space-y-4 relative z-10 p-6 pt-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Payee UPI ID / VPA</Label>
-                                    <div className="relative">
-                                        <Input 
-                                          placeholder="username@januin" 
-                                          value={upiInput} 
-                                          onChange={e => setUpiInput(e.target.value)} 
-                                          className="h-14 rounded-2xl bg-muted/30 border-none font-bold placeholder:font-medium pl-12" 
-                                        />
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                          <Search className="h-5 w-5" />
-                                        </div>
-                                        {isTrusted && (
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-success border border-success/20">
-                                              <UserCheck className="h-3.5 w-3.5" />
-                                              <span className="text-[8px] font-black uppercase">Trusted Contact</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Payment Amount</Label>
-                                    <div className="relative">
-                                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-muted-foreground">$</span>
+                            <div className="p-8 pt-4 space-y-6">
+                                <div className="space-y-4">
+                                    {/* AMOUNT INPUT - DOMINANT */}
+                                    <div className="relative group">
+                                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-muted-foreground/30 group-focus-within:text-primary transition-colors">$</span>
                                       <Input 
                                         type="number" 
                                         placeholder="0.00" 
                                         value={amount} 
                                         onChange={e => setAmount(e.target.value)} 
-                                        className="h-16 text-3xl font-black font-mono pl-10 rounded-2xl bg-muted/30 border-none" 
+                                        className="h-20 text-4xl font-black font-mono pl-12 rounded-3xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all text-center" 
                                       />
+                                    </div>
+
+                                    {/* MINIMAL UPI INPUT */}
+                                    <div className="relative">
+                                        <Input 
+                                          placeholder="name@januin" 
+                                          value={upiInput} 
+                                          onChange={e => setUpiInput(e.target.value)} 
+                                          className="h-12 rounded-2xl bg-muted/20 border-none font-bold placeholder:font-medium pl-10" 
+                                        />
+                                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50">
+                                          <Search className="h-4 w-4" />
+                                        </div>
                                     </div>
                                 </div>
 
-                                {riskScore > 0 && (
-                                  <motion.div 
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className={cn(
-                                      "rounded-2xl p-4 flex items-start gap-3",
-                                      riskScore < 20 ? "bg-success/5 border border-success/20" : 
-                                      riskScore < 50 ? "bg-warning/5 border border-warning/20" : "bg-danger/5 border border-danger/20"
-                                    )}
-                                  >
-                                    {riskScore < 20 ? <ShieldCheck className="h-5 w-5 text-success shrink-0 mt-1" /> : <ShieldAlert className="h-5 w-5 text-danger shrink-0 mt-1" />}
-                                    <div>
-                                      <p className={cn("text-xs font-black uppercase", riskScore < 50 ? "text-success" : "text-danger")}>
-                                        {riskScore < 20 ? "Safe Transaction" : riskScore < 50 ? "Caution Advised" : "High Risk Detected"}
-                                      </p>
-                                      <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">
-                                        {riskScore < 20 ? "AI Analysis has verified this ID against our global database. Secure to proceed." : 
-                                         riskScore < 50 ? "First-time transfer to this recipient. Please re-verify the ID before proceeding." : 
-                                         "AI has detected unusual behavioral patterns. Verification code required."}
-                                      </p>
-                                    </div>
-                                  </motion.div>
-                                )}
-
-                                <Button className="h-16 w-full rounded-2xl text-lg font-black shadow-elevated transition-transform active:scale-95 gradient-primary border-none" onClick={handlePay}>
-                                    Proceed Securely <ArrowRight className="ml-2 h-5 w-5" />
+                                <Button 
+                                  className="h-16 w-full rounded-[1.5rem] text-sm font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 gradient-primary border-none" 
+                                  onClick={handlePay}
+                                >
+                                    Proceed Securely <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                                 
-                                <p className="text-center text-[9px] text-muted-foreground font-bold">
-                                  T&C Apply. All transactions are protected by Januin Zero-Trust Guardian.
+                                <p className="text-center text-[9px] text-muted-foreground font-bold opacity-40">
+                                  End-to-end encrypted by Januin Guardian v4.2
                                 </p>
                             </div>
                         </div>
