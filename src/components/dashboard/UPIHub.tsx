@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   QrCode, CreditCard, Plus, ArrowRight, ShieldCheck, AlertCircle, 
   CheckCircle2, Copy, Search, Users, Smartphone, Store, 
-  ShieldAlert, Info, InfoIcon, ShieldQuestion, UserCheck
+  ShieldAlert, Info, InfoIcon, ShieldQuestion, UserCheck,
+  Shield, History, Sparkles, Verified
 } from "lucide-react";
+import { VerificationResult } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,13 +22,13 @@ interface UPIHubProps {
 }
 
 const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UPIHubProps) => {
-    const { currentUser, receiveMoney, sendMoney, sendExternalMoney, users } = useApp();
+    const { currentUser, receiveMoney, sendMoney, sendExternalMoney, users, verifyVpa } = useApp();
     const [activeView, setActiveView] = useState<"pay" | "qr" | "manage">("pay");
     const [upiInput, setUpiInput] = useState(initialUpiId);
     const [payeeName, setPayeeName] = useState(initialPayeeName);
     const [amount, setAmount] = useState("");
-    const [riskScore, setRiskScore] = useState(2);
-    const [isTrusted, setIsTrusted] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
     const [pendingPayment, setPendingPayment] = useState<{ upiId: string, amount: number } | null>(null);
 
     useEffect(() => {
@@ -54,21 +56,43 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
     }, [initialUpiId, initialPayeeName]);
 
     useEffect(() => {
-        // Mock risk score calculation based on input
-        if (upiInput.length > 5) {
-            const score = Math.floor(Math.random() * 20) + 5;
-            setRiskScore(score);
-            const user = users.find(u => u.upiId === upiInput || u.email === upiInput);
-            setIsTrusted(!!user && user.trustLevel === "trusted");
-        } else {
-            setRiskScore(0);
-            setIsTrusted(false);
-        }
-    }, [upiInput, users]);
+        const verifyId = async () => {
+            if (upiInput.includes("@") && upiInput.length > 5) {
+                setIsVerifying(true);
+                try {
+                    const result = await verifyVpa(upiInput);
+                    setVerificationResult(result);
+                    if (!payeeName) {
+                        setPayeeName(result.registeredName);
+                    }
+                    
+                    // Live Notifications for manual entry
+                    if (result.riskScore < 20) {
+                        toast.success("AI Guardian: ID Verified Secure", {
+                            description: `${result.registeredName} is a Januin-trusted recipient.`,
+                        });
+                    } else if (result.riskScore > 70) {
+                        toast.error("AI Guardian: High Risk Detected", {
+                            description: "Review safety analysis before proceeding.",
+                        });
+                    }
+                } catch (err) {
+                    console.error("Verification failed", err);
+                } finally {
+                    setIsVerifying(false);
+                }
+            } else {
+                setVerificationResult(null);
+            }
+        };
+
+        const timer = setTimeout(verifyId, 600);
+        return () => clearTimeout(timer);
+    }, [upiInput, verifyVpa, payeeName]);
 
     if (!currentUser) return null;
 
-    const upiUri = `upi://pay?pa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name)}&cu=USD`;
+    const upiUri = `upi://pay?pa=${currentUser.upiId}&pn=${encodeURIComponent(currentUser.name)}&cu=INR`;
 
     const handlePay = () => {
         if (!upiInput.includes("@")) {
@@ -81,8 +105,8 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
             return;
         }
         
-        if (riskScore > 80) {
-            toast.error("Transaction blocked by AI Guardian due to high risk score.");
+        if (verificationResult && verificationResult.riskScore > 80) {
+            toast.error("Transaction blocked by AI Guardian due to critical risk factors.");
             return;
         }
 
@@ -181,22 +205,131 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                                         {payeeName ? decodeURIComponent(payeeName.replace(/\+/g, ' ')) : "Enter UPI ID"}
                                     </h2>
                                     
-                                    {upiInput.includes("@") && (
-                                      <div className="flex justify-center mt-2">
-                                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 border border-success/10">
-                                              <ShieldCheck className="h-3 w-3 text-success" />
-                                              <span className="text-[9px] font-black uppercase text-success">Guardian Secured</span>
+                                    {verificationResult && (
+                                      <motion.div 
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="flex justify-center mt-3"
+                                      >
+                                          <div className={cn(
+                                            "inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-[0_0_15px_rgba(34,197,94,0.1)] transition-all",
+                                            verificationResult.trustLevel === "trusted" ? "bg-success/10 border-success/30 text-success shadow-success/10" : 
+                                            verificationResult.trustLevel === "verified" ? "bg-primary/10 border-primary/30 text-primary shadow-primary/10" : 
+                                            "bg-warning/10 border-warning/30 text-warning shadow-warning/10"
+                                          )}>
+                                              <motion.div
+                                                initial={{ rotate: -180, scale: 0 }}
+                                                animate={{ rotate: 0, scale: 1 }}
+                                                transition={{ type: "spring", damping: 12 }}
+                                              >
+                                                {verificationResult.trustLevel === "trusted" ? <ShieldCheck className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                                              </motion.div>
+                                              <span className="text-[10px] font-black uppercase tracking-[0.1em]">
+                                                {verificationResult.trustLevel === "trusted" ? "Januin Trusted" : verificationResult.trustLevel === "verified" ? "Identity Verified" : "Reviewing Safety"}
+                                              </span>
                                           </div>
+                                      </motion.div>
+                                    )}
+
+                                    {isVerifying && (
+                                      <div className="flex justify-center mt-3">
+                                        <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full animate-pulse border border-border/50">
+                                          <div className="h-2 w-2 bg-primary rounded-full animate-bounce" />
+                                          <span className="text-[9px] font-black uppercase text-muted-foreground">AI Scanning ID...</span>
+                                        </div>
                                       </div>
                                     )}
                                 </div>
                             </div>
 
+                            {/* DYNAMIC SECURITY ANALYSIS SECTION */}
+                            <AnimatePresence>
+                              {verificationResult && (
+                                <motion.div 
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden border-t border-border/10 bg-muted/5"
+                                >
+                                  <div className="p-6 pt-2 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                              <div className="p-1.5 rounded-lg bg-primary/10">
+                                                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                                              </div>
+                                              <div>
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Januin Safety Analysis</p>
+                                                <p className="text-[9px] font-bold text-muted-foreground/60">Risk Assessment Engine v5.0</p>
+                                              </div>
+                                          </div>
+                                          <div className="text-right">
+                                              <div className="text-xs font-black text-primary">SAFE SCORE</div>
+                                              <div className="flex items-center justify-end gap-1">
+                                                <span className={cn(
+                                                  "text-2xl font-black",
+                                                  verificationResult.riskScore < 20 ? "text-success" : verificationResult.riskScore < 50 ? "text-primary" : "text-warning"
+                                                )}>
+                                                  {100 - verificationResult.riskScore}
+                                                </span>
+                                                <span className="text-[10px] font-black opacity-30 mt-1">/100</span>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      {/* Safety Indicators Grid */}
+                                      <div className="grid grid-cols-2 gap-3">
+                                          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                  <Verified className="h-3 w-3 text-success" />
+                                                  <span className="text-[9px] font-black uppercase">KYC Status</span>
+                                              </div>
+                                              <p className="text-[10px] font-bold text-muted-foreground">{verificationResult.kycBadge}</p>
+                                          </div>
+                                          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                  <History className="h-3 w-3 text-primary" />
+                                                  <span className="text-[9px] font-black uppercase">Heritage</span>
+                                              </div>
+                                              <p className="text-[10px] font-bold text-muted-foreground">{verificationResult.heritageScore}</p>
+                                          </div>
+                                          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                  <Shield className="h-3 w-3 text-blue-500" />
+                                                  <span className="text-[9px] font-black uppercase">Integrity</span>
+                                              </div>
+                                              <p className="text-[10px] font-bold text-muted-foreground">{verificationResult.transactionIntegrity || "99.8% Success"}</p>
+                                          </div>
+                                          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                  <Users className="h-3 w-3 text-orange-500" />
+                                                  <span className="text-[9px] font-black uppercase">Community</span>
+                                              </div>
+                                              <p className="text-[10px] font-bold text-muted-foreground">{verificationResult.communitySafety}</p>
+                                          </div>
+                                      </div>
+                                      
+                                      <div className="relative h-1.5 w-full bg-muted rounded-full overflow-hidden shadow-inner">
+                                          <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${100 - verificationResult.riskScore}%` }}
+                                            className={cn(
+                                              "h-full rounded-full transition-all duration-1000",
+                                              verificationResult.riskScore < 20 ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" : 
+                                              verificationResult.riskScore < 50 ? "bg-primary shadow-[0_0_8px_rgba(59,130,246,0.4)]" : 
+                                              "bg-warning shadow-[0_0_8px_rgba(234,179,8,0.4)]"
+                                            )}
+                                          />
+                                      </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+
                             <div className="p-8 pt-4 space-y-6">
                                 <div className="space-y-4">
                                     {/* AMOUNT INPUT - DOMINANT */}
                                     <div className="relative group">
-                                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-muted-foreground/30 group-focus-within:text-primary transition-colors">$</span>
+                                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-muted-foreground/30 group-focus-within:text-primary transition-colors">₹</span>
                                       <Input 
                                         type="number" 
                                         placeholder="0.00" 

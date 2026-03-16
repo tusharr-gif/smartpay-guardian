@@ -117,7 +117,7 @@ const TransactionHistory = () => {
                       "font-mono font-black text-base leading-none",
                       isSend ? "text-red-600" : "text-emerald-600"
                     )}>
-                      {isSend ? "-" : "+"}${tx.amount.toLocaleString()}
+                      {isSend ? "-" : "+"}₹{tx.amount.toLocaleString()}
                     </p>
                     {tx.riskScore > 40 && (
                       <div className="flex items-center gap-1 mt-1">
@@ -169,7 +169,7 @@ const TransactionHistory = () => {
                     {selectedTx.senderId === currentUser.id ? <ArrowUpRight className="h-10 w-10" /> : <ArrowDownLeft className="h-10 w-10" />}
                  </div>
                  <h2 className="text-3xl font-black font-mono tracking-tighter">
-                   {selectedTx.senderId === currentUser.id ? "-" : "+"}${selectedTx.amount.toLocaleString()}
+                   {selectedTx.senderId === currentUser.id ? "-" : "+"}₹{selectedTx.amount.toLocaleString()}
                  </h2>
                  <p className="text-sm font-bold text-muted-foreground mt-1">
                    {selectedTx.senderId === currentUser.id ? "Sent to" : "Received from"} {selectedTx.senderId === currentUser.id ? selectedTx.receiverName : selectedTx.senderName}

@@ -66,7 +66,7 @@ const MerchantHub = ({ onContactClick }: MerchantHubProps) => {
                         <div className="text-center space-y-2">
                             <h3 className="text-lg font-bold">Dynamic UPI QR</h3>
                             <p className="text-xs text-muted-foreground">Customers can scan this to pay instantly</p>
-                            {merchantAmount && <p className="text-sm font-black text-primary">Amount: ${merchantAmount}</p>}
+                            {merchantAmount && <p className="text-sm font-black text-primary">Amount: ₹{merchantAmount}</p>}
                         </div>
 
                         {showAmountInput && (
@@ -106,7 +106,7 @@ const MerchantHub = ({ onContactClick }: MerchantHubProps) => {
                                 <Link className="h-4 w-4 text-primary" /> Create Payment Link
                             </h3>
                             <div className="space-y-3">
-                                <Input placeholder="Amount (USD)" value={linkAmount} onChange={e => setLinkAmount(e.target.value)} type="number" />
+                                <Input placeholder="Amount (INR)" value={linkAmount} onChange={e => setLinkAmount(e.target.value)} type="number" />
                                 <Input placeholder="Purpose (e.g. Freelance project)" value={linkPurpose} onChange={e => setLinkPurpose(e.target.value)} />
                                 <div className="flex gap-2">
                                     <Button className="flex-1 gradient-primary h-10 text-xs" onClick={() => toast.success("Secure Payment Link Created!")}>
@@ -133,7 +133,7 @@ const MerchantHub = ({ onContactClick }: MerchantHubProps) => {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-bold">$125.00</p>
+                                        <p className="text-sm font-bold">₹125.00</p>
                                         <span className="text-[9px] text-warning font-bold uppercase">Pending</span>
                                     </div>
                                 </div>
@@ -147,13 +147,13 @@ const MerchantHub = ({ onContactClick }: MerchantHubProps) => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="rounded-2xl border bg-card p-5 shadow-card">
                                 <h4 className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-1">Today's Sales</h4>
-                                <p className="text-2xl font-black font-mono text-primary">$4,250.00</p>
+                                <p className="text-2xl font-black font-mono text-primary">₹4,250.00</p>
                                 <p className="text-[9px] text-success font-bold mt-1">+12% vs yesterday</p>
                             </div>
                             <div className="rounded-2xl border bg-card p-5 shadow-card">
                                 <h4 className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-1">Settlements</h4>
-                                <p className="text-2xl font-black font-mono text-success">$3,800.00</p>
-                                <p className="text-[9px] text-muted-foreground font-bold mt-1">Pending: $450.00</p>
+                                <p className="text-2xl font-black font-mono text-success">₹3,800.00</p>
+                                <p className="text-[9px] text-muted-foreground font-bold mt-1">Pending: ₹450.00</p>
                             </div>
                         </div>
 

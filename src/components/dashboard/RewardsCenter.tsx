@@ -19,7 +19,7 @@ const RewardsCenter = () => {
         setTimeout(() => {
             scratchReward(id);
             setOpening(null);
-            toast.success(`You won $${amount.toFixed(2)} Cashback!`, {
+            toast.success(`You won ₹${amount.toFixed(2)} Cashback!`, {
               icon: <div className="h-6 w-6 rounded-full bg-success flex items-center justify-center"><Star className="h-3 w-3 text-white fill-white" /></div>
             });
         }, 1200);
@@ -53,7 +53,7 @@ const RewardsCenter = () => {
                     <div className="mt-8 flex gap-6">
                       <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Lifetime Cashback</p>
-                        <p className="text-lg font-black font-mono">$124.50</p>
+                        <p className="text-lg font-black font-mono">₹124.50</p>
                       </div>
                       <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Active Cards</p>
@@ -118,7 +118,7 @@ const RewardsCenter = () => {
                                       <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-success/10">
                                         <Coins className="h-7 w-7 text-success" />
                                       </div>
-                                      <p className="text-2xl font-black font-mono text-primary tracking-tighter">${reward.amount.toFixed(2)}</p>
+                                      <p className="text-2xl font-black font-mono text-primary tracking-tighter">₹{reward.amount.toFixed(2)}</p>
                                       <p className="text-[9px] font-black uppercase text-muted-foreground mt-1">Cashback Credited</p>
                                       <div className="mt-3 flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[7px] font-black uppercase text-success">
                                         <ShieldCheck className="h-2 w-2" /> Verified
@@ -143,7 +143,7 @@ const RewardsCenter = () => {
                         <Share2 className="h-6 w-6 text-muted-foreground" />
                       </div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Referral Bonus</p>
-                      <p className="text-[8px] font-bold text-muted-foreground/60 mt-1">Get up to $50 per invite</p>
+                      <p className="text-[8px] font-bold text-muted-foreground/60 mt-1">Get up to ₹50 per invite</p>
                   </motion.div>
               </div>
             </div>

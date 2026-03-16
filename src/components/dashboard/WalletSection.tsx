@@ -15,9 +15,17 @@ interface WalletSectionProps {
   onScanClick: () => void;
   onContactClick: () => void;
   onSavingsClick: () => void;
+  safetyLevel?: number;
+  isAnalyzing?: boolean;
 }
 
-const WalletSection = ({ onScanClick, onContactClick, onSavingsClick }: WalletSectionProps) => {
+const WalletSection = ({ 
+  onScanClick, 
+  onContactClick, 
+  onSavingsClick,
+  safetyLevel = 100,
+  isAnalyzing = false
+}: WalletSectionProps) => {
   const { currentUser, transactions, fraudAlerts } = useApp();
   const [balanceState, setBalanceState] = useState<"hidden" | "pin" | "visible">("hidden");
   const [pin, setPin] = useState("");
@@ -68,14 +76,41 @@ const WalletSection = ({ onScanClick, onContactClick, onSavingsClick }: WalletSe
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="md:hidden flex items-center justify-between rounded-2xl bg-success/10 p-3 text-success border border-success/20"
+        className={cn(
+          "md:hidden flex items-center justify-between rounded-2xl p-3 border transition-all duration-500",
+          isAnalyzing ? "bg-primary/5 border-primary/20 animate-pulse" : 
+          safetyLevel > 80 ? "bg-success/10 border-success/20 text-success" : "bg-warning/10 border-warning/20 text-warning"
+        )}
       >
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5" />
-          <span className="text-xs font-bold">AI Active Protection Level: Maximum</span>
+          {isAnalyzing ? (
+            <Shield className="h-5 w-5 text-primary animate-spin" />
+          ) : safetyLevel > 80 ? (
+            <ShieldCheck className="h-5 w-5" />
+          ) : (
+            <ShieldAlert className="h-5 w-5" />
+          )}
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-wider">
+              {isAnalyzing ? "AI Analyzing Security..." : "AI Active Protection Level"}
+            </span>
+            <span className="text-xs font-bold">
+              {isAnalyzing ? "Scanning Transaction..." : safetyLevel > 80 ? "Maximum Security" : "Review Recommended"}
+            </span>
+          </div>
         </div>
-        <div className="h-2 w-16 bg-success/20 rounded-full overflow-hidden">
-          <div className="h-full bg-success w-[90%]" />
+        <div className="flex flex-col items-end gap-1">
+          <div className="h-2 w-20 bg-muted rounded-full overflow-hidden shadow-inner">
+            <motion.div 
+              initial={{ width: "90%" }}
+              animate={{ width: `${safetyLevel}%` }}
+              className={cn(
+                "h-full rounded-full transition-all duration-1000",
+                safetyLevel > 80 ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-warning"
+              )}
+            />
+          </div>
+          <span className="text-[10px] font-black font-mono">{safetyLevel}%</span>
         </div>
       </motion.div>
 
@@ -197,7 +232,7 @@ const WalletSection = ({ onScanClick, onContactClick, onSavingsClick }: WalletSe
                      <div>
                        <p className="text-[10px] uppercase tracking-widest text-white/60 mb-1 font-bold">Available Balance</p>
                        <p className="text-4xl font-black font-mono tracking-tighter drop-shadow-md">
-                         ${currentUser.walletBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                         ₹{currentUser.walletBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                        </p>
                      </div>
                      <Button size="sm" variant="ghost" onClick={() => setBalanceState("hidden")} className="h-8 rounded-full bg-black/20 hover:bg-black/30 text-[10px] px-3 font-bold">

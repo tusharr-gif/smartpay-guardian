@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const SecureCheckout = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    
+
     const vpa = searchParams.get("vpa") || "unknown@januin";
     const amount = searchParams.get("am") || "0.00";
     const name = searchParams.get("pn") || "Verified Merchant";
@@ -95,7 +95,7 @@ const SecureCheckout = () => {
                                         "Verifying NPCI Registry",
                                         "Executing Threat Matrix"
                                     ].map((step, i) => (
-                                        <motion.div 
+                                        <motion.div
                                             key={step}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
@@ -120,9 +120,9 @@ const SecureCheckout = () => {
                                     <p className="text-[9px] uppercase font-black tracking-[0.2em] text-muted-foreground/50">Payment To</p>
                                     <h2 className="text-2xl font-black tracking-tight">{verificationData?.registeredName || name}</h2>
                                     <p className="text-xs text-primary/80 font-mono font-medium">{vpa}</p>
-                                    
+
                                     <div className="flex justify-center mt-4">
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ scale: 0.9, opacity: 0 }}
                                             animate={{ scale: 1, opacity: 1 }}
                                             className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border ${getTrustBg(verificationData?.trustLevel)}`}
@@ -141,7 +141,7 @@ const SecureCheckout = () => {
                                         <span className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">Trust Surety Factors</span>
                                         <span className="flex h-2 w-2 rounded-full bg-success animate-pulse" title="Live" />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <div className="flex items-center justify-between text-[10px] bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
                                             <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ const SecureCheckout = () => {
                                             </div>
                                             <span className="font-black text-success uppercase italic">Matched</span>
                                         </div>
-                                        
+
                                         <div className="flex items-center justify-between text-[10px] bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-1 w-1 rounded-full bg-primary" />
@@ -183,7 +183,7 @@ const SecureCheckout = () => {
                                 </div>
 
                                 <div className="text-center py-2">
-                                    <span className="text-4xl font-black font-mono tracking-tighter text-white/90">${amount}</span>
+                                    <span className="text-4xl font-black font-mono tracking-tighter text-white/90">₹{amount}</span>
                                 </div>
 
                                 <div className="pt-2">
@@ -237,7 +237,7 @@ const SecureCheckout = () => {
                                     </div>
                                     <div className="flex justify-between items-center text-sm font-black pt-4 border-t border-white/5">
                                         <span className="text-white/40 uppercase text-[10px] tracking-widest">Total</span>
-                                        <span className="font-mono text-2xl text-primary tracking-tighter">${amount}</span>
+                                        <span className="font-mono text-2xl text-primary tracking-tighter">₹{amount}</span>
                                     </div>
                                 </div>
 

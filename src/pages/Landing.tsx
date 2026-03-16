@@ -15,7 +15,7 @@ const features = [
 ];
 
 const stats = [
-  { value: "$2.4B+", label: "Processed" },
+  { value: "₹2.4B+", label: "Processed" },
   { value: "99.97%", label: "Uptime" },
   { value: "12M+", label: "Users" },
   { value: "<0.01%", label: "Fraud Rate" },

@@ -81,7 +81,7 @@ const SendMoney = () => {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Amount (USD)</Label>
+                <Label>Amount (INR)</Label>
                 <Input type="number" step="0.01" min="0.01" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" required />
               </div>
 
@@ -103,7 +103,7 @@ const SendMoney = () => {
                 </div>
               </div>
               <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-                Available balance: <span className="font-mono font-semibold text-foreground">${currentUser?.walletBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+                Available balance: <span className="font-mono font-semibold text-foreground">₹{currentUser?.walletBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
               </div>
               <Button type="submit" className="w-full gradient-primary border-0 text-primary-foreground">Continue</Button>
             </form>
@@ -119,7 +119,7 @@ const SendMoney = () => {
             <p className="mt-1 text-sm text-muted-foreground">Enter the 6-digit OTP to confirm</p>
             <div className="mt-4 rounded-lg bg-muted p-3 text-sm">
               <div className="flex justify-between items-center">
-                <span>Sending <span className="font-mono font-bold">${parseFloat(amount).toLocaleString()}</span> to <span className="font-medium">{email}</span></span>
+                <span>Sending <span className="font-mono font-bold">₹{parseFloat(amount).toLocaleString()}</span> to <span className="font-medium">{email}</span></span>
                 {isEscrow && <span className="text-[9px] font-bold uppercase text-primary border border-primary/30 px-1.5 py-0.5 rounded bg-primary/5">Escrow Active</span>}
               </div>
             </div>
@@ -140,7 +140,7 @@ const SendMoney = () => {
               {lastTx.status === "flagged" ? <AlertTriangle className="h-8 w-8 text-warning" /> : <CheckCircle2 className="h-8 w-8 text-success" />}
             </div>
             <h2 className="text-xl font-bold">{lastTx.status === "flagged" ? "Transaction Flagged" : "Transaction Complete"}</h2>
-            <p className="mt-2 text-3xl font-extrabold font-mono">${lastTx.amount.toLocaleString()}</p>
+            <p className="mt-2 text-3xl font-extrabold font-mono">₹{lastTx.amount.toLocaleString()}</p>
             <p className="mt-1 text-sm text-muted-foreground">to {lastTx.receiverName}</p>
             <div className="mt-6 rounded-lg bg-muted p-4 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Risk Score</span><span className={`font-mono font-bold ${lastTx.riskScore > 70 ? "text-danger" : lastTx.riskScore > 40 ? "text-warning" : "text-success"}`}>{lastTx.riskScore}/100</span></div>

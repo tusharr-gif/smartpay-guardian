@@ -157,7 +157,7 @@ export function useAppData() {
       setCurrentUser(existingUser);
       return existingUser;
     }
-    
+
     // Shadow Login: Create a temporary user for any new number
     const newUser: User = {
       id: `u${Date.now()}`,
@@ -173,7 +173,7 @@ export function useAppData() {
       points: 100,
       linkedBanks: [{ id: `b${Date.now()}`, bankName: "Axis Bank", accountNumber: "****8822", isPrimary: true, balance: 15000 }]
     };
-    
+
     setCurrentUser(newUser);
     return newUser;
   };
@@ -285,7 +285,7 @@ export function useAppData() {
     }
 
     if (status === "completed") {
-        currentUser.walletBalance -= amount;
+      currentUser.walletBalance -= amount;
     }
     return tx;
   };
@@ -316,25 +316,25 @@ export function useAppData() {
 
     // Specific Simulated Database
     const simulatedRegistry: Record<string, Partial<VerificationResult>> = {
-        "tushar@pay": { registeredName: "Tushar Gupta", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2020" },
-        "fraud.alert@upi": { registeredName: "MUMBAI SPAM CENTER", trustLevel: "flagged", communitySafety: "24 Fraud Reports", heritageScore: "New (1 day old)", riskScore: 98 },
-        "starbucks@axis": { registeredName: "Tata Starbucks PVT LTD", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2012" },
-        "suspicious.user@okicici": { registeredName: "Ankit Unknown", trustLevel: "suspicious", communitySafety: "3 Reports", riskScore: 72 }
+      "tushar@pay": { registeredName: "Tushar Gupta", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2020" },
+      "fraud.alert@upi": { registeredName: "MUMBAI SPAM CENTER", trustLevel: "flagged", communitySafety: "24 Fraud Reports", heritageScore: "New (1 day old)", riskScore: 98 },
+      "starbucks@axis": { registeredName: "Tata Starbucks PVT LTD", trustLevel: "trusted", kycBadge: "Full Video KYC", heritageScore: "Active since 2012" },
+      "suspicious.user@okicici": { registeredName: "Ankit Unknown", trustLevel: "suspicious", communitySafety: "3 Reports", riskScore: 72 }
     };
 
     if (simulatedRegistry[vpa]) {
-        return {
-            vpa,
-            registeredName: "Verified User",
-            bankName: "HDFC Bank",
-            kycBadge: "Aadhar Verified",
-            heritageScore: "Active since 2022",
-            transactionIntegrity: "99.9% Success Rate",
-            communitySafety: "Zero Fraud Reports",
-            trustLevel: "verified",
-            riskScore: 10,
-            ...simulatedRegistry[vpa]
-        } as VerificationResult;
+      return {
+        vpa,
+        registeredName: "Verified User",
+        bankName: "HDFC Bank",
+        kycBadge: "Aadhar Verified",
+        heritageScore: "Active since 2022",
+        transactionIntegrity: "99.9% Success Rate",
+        communitySafety: "Zero Fraud Reports",
+        trustLevel: "verified",
+        riskScore: 10,
+        ...simulatedRegistry[vpa]
+      } as VerificationResult;
     }
 
     // Simple pattern matching for simulation fallback

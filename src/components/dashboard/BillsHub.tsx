@@ -105,7 +105,7 @@ const BillsHub = () => {
                                     <span>Bill Amount</span>
                                     <span>Consumer: 12884920</span>
                                 </div>
-                                <div className="text-2xl font-black font-mono text-primary">$156.40</div>
+                                <div className="text-2xl font-black font-mono text-primary">₹156.40</div>
                             </div>
 
                             <div className="flex items-start gap-3 rounded-xl bg-success/10 p-3 text-xs text-success font-medium">

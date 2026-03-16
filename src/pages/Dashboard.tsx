@@ -41,7 +41,9 @@ const Dashboard = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [scannedUpi, setScannedUpi] = useState("");
   const [scannedName, setScannedName] = useState("");
-  const { currentUser, logout, fraudAlerts } = useApp();
+  const [globalSafetyLevel, setGlobalSafetyLevel] = useState<number>(98);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { currentUser, logout, fraudAlerts, verifyVpa } = useApp();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const Dashboard = () => {
     return null;
   }
 
-  const handleQRScan = (data: string) => {
+  const handleQRScan = async (data: string) => {
     let upiId = data;
     let payeeName = "";
     try {
@@ -71,14 +73,51 @@ const Dashboard = () => {
     setScannedName(payeeName);
     setShowScanner(false);
     setActiveTab("upi");
-    toast.success(`Scanned: ${upiId}`);
+    
+    // START LIVE ANALYSIS
+    setIsAnalyzing(true);
+    toast.info("AI Guardian: Analyzing Transaction Safety...", {
+      description: `Target: ${upiId}`,
+      icon: <Shield className="h-4 w-4 text-primary animate-pulse" />,
+    });
+
+    try {
+      const result = await verifyVpa(upiId);
+      setGlobalSafetyLevel(100 - result.riskScore);
+      
+      if (result.riskScore < 20) {
+        toast.success("Transaction Secured!", {
+          description: "This recipient is highly trusted. AI Guardian has verified all safety protocols.",
+        });
+      } else if (result.riskScore < 60) {
+        toast.warning("Safety Review Completed", {
+          description: "Identity verified, but proceed with usual caution.",
+        });
+      } else {
+        toast.error("Critical Risk Detected!", {
+          description: "AI Guardian advises against this transaction. High risk of fraud.",
+        });
+      }
+    } catch (err) {
+      console.error("Safety analysis failed", err);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const unresolvedAlertsCount = fraudAlerts.filter(a => !a.resolved).length;
 
   const renderContent = () => {
     switch (activeTab) {
-      case "wallet": return <WalletSection onScanClick={() => setShowScanner(true)} onContactClick={() => setActiveTab("contacts")} onSavingsClick={() => setActiveTab("savings")} />;
+      case "wallet": return (
+        <WalletSection 
+          onScanClick={() => setShowScanner(true)} 
+          onContactClick={() => setActiveTab("contacts")} 
+          onSavingsClick={() => setActiveTab("savings")}
+          safetyLevel={globalSafetyLevel}
+          isAnalyzing={isAnalyzing}
+        />
+      );
       case "upi": return <UPIHub initialUpiId={scannedUpi} initialPayeeName={scannedName} onContactClick={() => setActiveTab("contacts")} />;
       case "bills": return <BillsHub />;
       case "merchant": return <MerchantHub onContactClick={() => setActiveTab("contacts")} />;
@@ -208,10 +247,44 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full bg-success/10 px-4 py-2 text-success">
-                <Shield className="h-4 w-4" />
-                <span className="text-xs font-bold">AI Active Protection</span>
+              {/* LIVE SAFETY MONITOR */}
+              <div className={cn(
+                "flex items-center gap-3 rounded-2xl px-5 py-2.5 border transition-all duration-500",
+                isAnalyzing ? "bg-primary/5 border-primary/20 animate-pulse" : 
+                globalSafetyLevel > 80 ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20"
+              )}>
+                <div className="relative">
+                  <Shield className={cn(
+                    "h-5 w-5",
+                    isAnalyzing ? "text-primary animate-spin" : 
+                    globalSafetyLevel > 80 ? "text-success" : "text-warning"
+                  )} />
+                  {isAnalyzing && <div className="absolute inset-0 h-5 w-5 rounded-full bg-primary/20 animate-ping" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Live Safety Level</span>
+                    {isAnalyzing && <span className="text-[8px] font-black uppercase text-primary animate-bounce">Analyzing...</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-24 bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: "90%" }}
+                        animate={{ width: `${globalSafetyLevel}%` }}
+                        className={cn(
+                          "h-full rounded-full transition-all duration-1000",
+                          globalSafetyLevel > 80 ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-warning"
+                        )}
+                      />
+                    </div>
+                    <span className={cn(
+                      "text-xs font-black font-mono",
+                      globalSafetyLevel > 80 ? "text-success" : "text-warning"
+                    )}>{globalSafetyLevel}%</span>
+                  </div>
+                </div>
               </div>
+
               <Button variant="outline" size="icon" className="rounded-full shadow-sm">
                 <Bell className="h-4 w-4" />
               </Button>
