@@ -29,23 +29,7 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
     const [amount, setAmount] = useState("");
     const [isVerifying, setIsVerifying] = useState(false);
     const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
-    const [pendingPayment, setPendingPayment] = useState<{ upiId: string, amount: number } | null>(null);
-
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && pendingPayment) {
-                // Return to app after PhonePe/GPay flow - log as mock success!
-                sendExternalMoney(pendingPayment.upiId, pendingPayment.amount);
-                toast.success(`Payment Success: ₹${pendingPayment.amount} sent to ${pendingPayment.upiId}`);
-                setPendingPayment(null);
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [pendingPayment, sendExternalMoney]);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         if (initialUpiId) {
@@ -113,30 +97,23 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
         const internalUser = users.find(u => u.upiId === upiInput);
         
         if (internalUser) {
-            sendMoney(internalUser.email, parsedAmount);
-            toast.success(`Encrypted transaction initiated for ${upiInput}`);
-            setAmount("");
-            setUpiInput("");
+            setIsProcessing(true);
+            setTimeout(() => {
+                sendMoney(internalUser.email, parsedAmount);
+                toast.success(`Encrypted transaction initiated for ${upiInput}`);
+                setAmount("");
+                setUpiInput("");
+                setIsProcessing(false);
+            }, 1500);
         } else {
-            // Stage the payment locally so when the user returns from PhonePe, we confirm it
-            setPendingPayment({ upiId: upiInput, amount: parsedAmount });
-            toast.success(`Opening Payment Apps...`);
-            
-            // Universal UPI link format
-            const uri = `upi://pay?pa=${upiInput}&pn=Payee&am=${parsedAmount}&cu=INR`;
-            const isAndroid = /Android/i.test(navigator.userAgent || "");
-            
-            if (isAndroid) {
-                // Highly strict Android Intent format ensures the OS Chooser pops up (GPay, PhonePe, Paytm, etc.)
-                const intentUrl = `intent://pay?pa=${upiInput}&pn=Payee&am=${parsedAmount}&cu=INR#Intent;scheme=upi;end`;
-                window.location.href = intentUrl;
-            } else {
-                // Fallback for iOS natively handling upi://
-                window.location.href = uri;
-            }
-            
-            setAmount("");
-            setUpiInput("");
+            setIsProcessing(true);
+            setTimeout(() => {
+                sendExternalMoney(upiInput, parsedAmount);
+                toast.success(`Payment Success: ₹${parsedAmount} sent to ${upiInput}`);
+                setAmount("");
+                setUpiInput("");
+                setIsProcessing(false);
+            }, 1500);
         }
     };
 
@@ -356,8 +333,9 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                                 <Button 
                                   className="h-16 w-full rounded-[1.5rem] text-sm font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 gradient-primary border-none" 
                                   onClick={handlePay}
+                                  disabled={isProcessing}
                                 >
-                                    Proceed Securely <ArrowRight className="ml-2 h-4 w-4" />
+                                    {isProcessing ? "Processing..." : <>Proceed Securely <ArrowRight className="ml-2 h-4 w-4" /></>}
                                 </Button>
                                 
                                 <p className="text-center text-[9px] text-muted-foreground font-bold opacity-40">
