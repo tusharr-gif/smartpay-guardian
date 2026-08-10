@@ -30,6 +30,23 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
     const [isVerifying, setIsVerifying] = useState(false);
     const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [pendingPayment, setPendingPayment] = useState<{ upiId: string, amount: number } | null>(null);
+
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && pendingPayment) {
+                // Return to app after PhonePe/GPay flow - log as mock success!
+                sendExternalMoney(pendingPayment.upiId, pendingPayment.amount);
+                toast.success(`Payment Success: ₹${pendingPayment.amount} sent to ${pendingPayment.upiId}`);
+                setPendingPayment(null);
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [pendingPayment, sendExternalMoney]);
 
     useEffect(() => {
         if (initialUpiId) {
@@ -106,14 +123,30 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                 setIsProcessing(false);
             }, 1500);
         } else {
-            setIsProcessing(true);
-            setTimeout(() => {
-                sendExternalMoney(upiInput, parsedAmount);
-                toast.success(`Payment Success: ₹${parsedAmount} sent to ${upiInput}`);
-                setAmount("");
-                setUpiInput("");
-                setIsProcessing(false);
-            }, 1500);
+            // Stage the payment locally so when the user returns from PhonePe, we confirm it
+            setPendingPayment({ upiId: upiInput, amount: parsedAmount });
+            toast.success(`Opening Payment Apps...`);
+            
+            // Generate a unique transaction reference to prevent PhonePe security rejection
+            const trRef = `TR${Date.now()}`;
+            const encodedName = encodeURIComponent(payeeName || "Payee");
+            
+            // Universal UPI link format with tr (Transaction Ref) and tn (Transaction Note)
+            const uri = `upi://pay?pa=${upiInput}&pn=${encodedName}&tr=${trRef}&am=${parsedAmount}&cu=INR&tn=Payment`;
+            
+            const isAndroid = /Android/i.test(navigator.userAgent || "");
+            
+            if (isAndroid) {
+                // Highly strict Android Intent format ensures the OS Chooser pops up (GPay, PhonePe, Paytm, etc.)
+                const intentUrl = `intent://pay?pa=${upiInput}&pn=${encodedName}&tr=${trRef}&am=${parsedAmount}&cu=INR&tn=Payment#Intent;scheme=upi;end`;
+                window.location.href = intentUrl;
+            } else {
+                // Fallback for iOS natively handling upi://
+                window.location.href = uri;
+            }
+            
+            setAmount("");
+            setUpiInput("");
         }
     };
 
