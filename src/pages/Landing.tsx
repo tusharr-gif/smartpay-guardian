@@ -4,6 +4,7 @@ import { useApp } from "@/context/AppContext";
 import { motion } from "framer-motion";
 import { Shield, Zap, BarChart3, ArrowRight, Lock, Globe, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const features = [
   { icon: Shield, title: "AI Fraud Detection", desc: "Real-time ML-powered risk scoring on every transaction" },
@@ -37,14 +38,15 @@ const Landing = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-[#0a192f] border border-white/5 shadow-glow">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-sidebar-accent border border-sidebar-border shadow-glow">
               <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-white">Januin pay</span>
+            <span className="text-xl font-bold tracking-tight text-foreground">Januin pay</span>
           </Link>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-white">Sign In</Button>
+              <Button variant="ghost" size="sm" className="text-foreground">Sign In</Button>
             </Link>
             <Link to="/register">
               <Button size="sm" className="gradient-primary border-0 text-primary-foreground">Get Started</Button>
@@ -69,7 +71,7 @@ const Landing = () => {
               <Zap className="h-3.5 w-3.5" />
               AI-Powered Fraud Detection
             </div>
-            <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-tight tracking-tight text-primary-foreground md:text-7xl">
+            <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-tight tracking-tight text-foreground md:text-7xl">
               Payments that{" "}
               <span className="text-gradient">protect</span>
               {" "}themselves
@@ -101,7 +103,7 @@ const Landing = () => {
           >
             {stats.map(s => (
               <div key={s.label} className="text-center">
-                <div className="text-3xl font-extrabold text-primary-foreground">{s.value}</div>
+                <div className="text-3xl font-extrabold text-foreground">{s.value}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
               </div>
             ))}
@@ -140,7 +142,7 @@ const Landing = () => {
       {/* CTA */}
       <section className="gradient-dark py-20">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-primary-foreground md:text-4xl">Ready to secure your payments?</h2>
+          <h2 className="text-3xl font-bold text-foreground md:text-4xl">Ready to secure your payments?</h2>
           <p className="mt-4 text-muted-foreground">Join 12 million users who trust Januin pay</p>
           <Link to="/register">
             <Button size="lg" className="mt-8 gradient-primary border-0 px-10 text-lg text-primary-foreground shadow-glow">
@@ -151,11 +153,11 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-10">
+      <footer className="border-t border-border py-10 bg-background/50">
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Januin pay" className="h-6 w-6 object-contain" />
-            <span className="font-semibold text-white">Januin pay</span>
+            <span className="font-semibold text-foreground">Januin pay</span>
           </div>
           <p className="text-sm text-muted-foreground">© 2025 Januin pay. AI Smart Payment & Fraud Detection Platform.</p>
         </div>

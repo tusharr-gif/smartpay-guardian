@@ -20,6 +20,7 @@ import BottomNav from "@/components/dashboard/BottomNav";
 import QRScanner from "@/components/dashboard/QRScanner";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const desktopTabs = [
   { id: "wallet", label: "My Wallet", icon: Wallet },
@@ -133,11 +134,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background pb-16 md:pb-0">
+    <div className="flex min-h-screen bg-background aurora-bg pb-16 md:pb-0">
       {/* Sidebar - Desktop Only */}
-      <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col gradient-dark border-r border-sidebar-border md:flex">
+      <aside className="fixed left-6 top-6 bottom-6 z-40 hidden w-[260px] flex-col bg-sidebar/80 backdrop-blur-2xl border border-sidebar-border shadow-elevated rounded-[2rem] md:flex overflow-hidden transition-all">
         <div className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-[#0a192f] border border-white/5 shadow-glow">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden bg-sidebar-accent border border-sidebar-border shadow-glow">
             <img src="/logo.png" alt="Januin pay" className="h-full w-full object-contain" />
           </div>
           <span className="text-xl font-black tracking-tight text-sidebar-foreground italic uppercase">JANUIN</span>
@@ -195,7 +196,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-64">
+      <main className="flex-1 md:ml-[300px] relative z-10 pb-10">
         {/* Mobile Header */}
         <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/80 px-4 py-3 backdrop-blur-md md:hidden">
           <div className="flex items-center gap-3">
@@ -214,6 +215,7 @@ const Dashboard = () => {
                 <span className="text-[10px] font-bold">{unresolvedAlertsCount}</span>
               </div>
             )}
+            <ThemeToggle />
             <Button variant="ghost" size="icon" className="relative h-9 w-9 text-muted-foreground">
               <Bell className="h-5 w-5" />
               {unresolvedAlertsCount > 0 && (
@@ -227,7 +229,7 @@ const Dashboard = () => {
         </header>
 
         {/* Desktop Header */}
-        <div className="hidden border-b bg-card/50 p-8 md:block">
+        <div className="hidden border-b border-border/50 bg-background/40 backdrop-blur-md p-8 md:block sticky top-0 z-30 shadow-sm mt-6 mr-6 rounded-3xl">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
@@ -286,6 +288,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              <ThemeToggle />
               <Button variant="outline" size="icon" className="rounded-full shadow-sm">
                 <Bell className="h-4 w-4" />
               </Button>

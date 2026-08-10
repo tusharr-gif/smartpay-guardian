@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -34,15 +34,15 @@
     --input: 220 13% 91%;
     --ring: 217 91% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
 
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 220 14% 96%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 10%;
     --sidebar-primary: 217 91% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 18%;
-    --sidebar-accent-foreground: 220 14% 96%;
-    --sidebar-border: 220 20% 18%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 25% 10%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217 91% 50%;
 
     /* Custom fintech tokens */
@@ -55,11 +55,11 @@
 
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 50%), hsl(230 80% 60%));
     --gradient-accent: linear-gradient(135deg, hsl(168 72% 42%), hsl(180 60% 50%));
-    --gradient-dark: linear-gradient(135deg, hsl(220 25% 10%), hsl(230 25% 18%));
-    --gradient-hero: linear-gradient(160deg, hsl(220 25% 6%), hsl(220 30% 12%), hsl(230 25% 18%));
+    --gradient-dark: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 20% 97%));
+    --gradient-hero: linear-gradient(160deg, hsl(220 60% 98%), hsl(220 40% 94%), hsl(230 50% 96%));
 
-    --shadow-card: 0 1px 3px 0 hsl(220 25% 10% / 0.06), 0 1px 2px -1px hsl(220 25% 10% / 0.06);
-    --shadow-elevated: 0 10px 30px -10px hsl(217 91% 50% / 0.15), 0 4px 6px -2px hsl(220 25% 10% / 0.05);
+    --shadow-card: 0 4px 20px -2px hsl(220 25% 10% / 0.05), 0 0 3px hsl(220 25% 10% / 0.02);
+    --shadow-elevated: 0 10px 40px -10px hsl(217 91% 50% / 0.15), 0 4px 6px -2px hsl(220 25% 10% / 0.05);
     --shadow-glow: 0 0 40px hsl(217 91% 50% / 0.2);
 
     --font-display: 'Inter', system-ui, sans-serif;
@@ -86,6 +86,20 @@
     --border: 220 20% 18%;
     --input: 220 20% 18%;
     --ring: 217 91% 60%;
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 217 91% 60%;
+
+    --gradient-dark: linear-gradient(135deg, hsl(220 25% 10%), hsl(230 25% 18%));
+    --gradient-hero: linear-gradient(160deg, hsl(220 25% 6%), hsl(220 30% 12%), hsl(230 25% 18%));
+    
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
   }
 }
 
@@ -132,9 +146,9 @@
     background-clip: text;
   }
   .glass {
-    background: hsl(0 0% 100% / 0.08);
+    background: hsl(var(--background) / 0.7);
     backdrop-filter: blur(16px);
-    border: 1px solid hsl(0 0% 100% / 0.1);
+    border: 1px solid hsl(var(--foreground) / 0.08);
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -145,5 +159,17 @@
   }
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+  .aurora-bg {
+    background-image: repeating-linear-gradient(
+      100deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.05) 25%,
+      transparent 50%,
+      hsl(var(--accent) / 0.05) 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: aurora 20s linear infinite;
   }
 }

@@ -125,15 +125,16 @@ const WalletSection = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               onClick={() => action.action?.()}
-              className="flex flex-col items-center gap-2 group"
+              className="flex flex-col items-center gap-3 group"
             >
               <div className={cn(
-                "flex h-12 w-12 md:h-16 md:w-16 items-center justify-center rounded-2xl text-white shadow-md transition-transform group-active:scale-95",
+                "relative flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-[1.25rem] text-white shadow-lg shadow-black/5 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-xl group-active:scale-95",
                 action.color
               )}>
-                <action.icon className="h-5 w-5 md:h-7 md:w-7" />
+                <div className="absolute inset-0 bg-white/20 rounded-[1.25rem] opacity-0 group-hover:opacity-100 transition-opacity" />
+                <action.icon className="relative z-10 h-6 w-6 md:h-7 md:w-7 drop-shadow-sm" />
               </div>
-              <span className="text-[10px] md:text-sm font-semibold text-center leading-tight group-hover:text-primary transition-colors">{action.label}</span>
+              <span className="text-xs md:text-sm font-semibold text-center leading-tight text-foreground/80 group-hover:text-primary transition-colors">{action.label}</span>
             </motion.button>
           ))}
         </div>
@@ -145,11 +146,11 @@ const WalletSection = ({
         <div className="rounded-3xl border border-border bg-card p-4 shadow-sm">
           <div className="grid grid-cols-4 gap-2">
             {billActions.map((action, i) => (
-                <button key={action.id} className="flex flex-col items-center gap-2 group">
-                  <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl transition-transform group-active:scale-95", action.color)}>
-                      <action.icon className="h-5 w-5" />
+                <button key={action.id} className="flex flex-col items-center gap-3 group">
+                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-sm border border-border/50 group-active:scale-95", action.color)}>
+                      <action.icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                   </div>
-                  <span className="text-[10px] font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
+                  <span className="text-xs font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
                 </button>
             ))}
           </div>
@@ -168,11 +169,11 @@ const WalletSection = ({
         <div className="rounded-3xl border border-border bg-card p-4 shadow-sm">
           <div className="grid grid-cols-4 gap-2">
             {investActions.map((action, i) => (
-                <button key={action.id} className="flex flex-col items-center gap-2 group">
-                  <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl transition-transform group-active:scale-95", action.color)}>
-                      <action.icon className="h-5 w-5" />
+                <button key={action.id} className="flex flex-col items-center gap-3 group">
+                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-sm border border-border/50 group-active:scale-95", action.color)}>
+                      <action.icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                   </div>
-                  <span className="text-[10px] font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
+                  <span className="text-xs font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
                 </button>
             ))}
           </div>
@@ -183,7 +184,7 @@ const WalletSection = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl gradient-primary p-6 text-primary-foreground shadow-glow"
+        className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-blue-600 to-indigo-700 p-7 text-white shadow-elevated border border-white/10"
       >
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
