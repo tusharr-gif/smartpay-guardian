@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import SecureCheckout from "./pages/SecureCheckout";
 import NotFound from "./pages/NotFound";
+import { Chatbot } from "./components/Chatbot";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/secure-pay" element={<SecureCheckout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Chatbot />
           </BrowserRouter>
         </AppProvider>
       </ThemeProvider>
