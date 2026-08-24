@@ -368,7 +368,26 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                                 >
                                     {isProcessing ? "Processing..." : <>Proceed Securely <ArrowRight className="ml-2 h-4 w-4" /></>}
                                 </Button>
-                                
+
+                                {verificationResult && verificationResult.riskScore > 50 && (
+                                  <Button 
+                                    variant="outline"
+                                    className="h-14 w-full rounded-[1.2rem] text-xs font-black uppercase tracking-widest border-2 border-danger/30 text-danger hover:bg-danger/10 hover:border-danger transition-all active:scale-95" 
+                                    onClick={() => {
+                                      toast.error("User Blocked & Reported!", {
+                                        description: `${verificationResult.registeredName} has been blacklisted across Januin Pay.`,
+                                        icon: <ShieldAlert className="h-5 w-5 text-danger" />
+                                      });
+                                      setUpiInput("");
+                                      setPayeeName("");
+                                      setAmount("");
+                                      setVerificationResult(null);
+                                    }}
+                                  >
+                                    <ShieldAlert className="mr-2 h-4 w-4" /> Block & Report User
+                                  </Button>
+                                )}
+                               
                                 <p className="text-center text-[9px] text-muted-foreground font-bold opacity-40">
                                   End-to-end encrypted by Januin Guardian v4.2
                                 </p>
