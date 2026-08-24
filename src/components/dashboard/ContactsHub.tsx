@@ -113,8 +113,8 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
   const activeContacts = syncedContacts.length > 0 ? syncedContacts : MOCK_CONTACTS;
 
   const filteredContacts = activeContacts.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.phone.includes(searchQuery)
+    (c.name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (c.phone || "").includes(searchQuery)
   );
 
   const isPhoneNumber = /^\d{10}$/.test(searchQuery);
