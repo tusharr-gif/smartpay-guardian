@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,18 +10,21 @@ import {
   Settings, UserCheck, Mail, MapPin, Phone,
   Gift, Sparkles, TrendingUp, HandHelping, Trophy, 
   CheckCircle2, Star, Zap, Share2, Coins, ArrowRight,
-  ShieldCheck
+  ShieldCheck, X
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { Moon } from "lucide-react";
 
+const MONEY_AVATARS = ["🤑", "💰", "🏦", "💎", "💸", "💳", "🪙", "👑", "📈", "🚀", "😎", "🎩"];
+
 const ProfileSettings = () => {
-  const { currentUser, logout } = useApp();
+  const { currentUser, logout, setCurrentUser } = useApp();
   const { theme, setTheme } = useTheme();
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   if (!currentUser) return null;
 
@@ -68,10 +72,50 @@ const ProfileSettings = () => {
             <div className="flex h-24 w-24 items-center justify-center rounded-[32px] gradient-primary text-3xl font-black text-white shadow-glow">
               {currentUser.avatar}
             </div>
-            <button className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-card border-2 border-background shadow-md text-primary">
+            <button 
+              onClick={() => setShowAvatarPicker(true)}
+              className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-card border-2 border-background shadow-md text-primary hover:scale-110 transition-transform"
+            >
               <Settings className="h-4 w-4" />
             </button>
           </div>
+
+          {/* Avatar Picker Modal */}
+          <AnimatePresence>
+            {showAvatarPicker && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="absolute top-4 left-4 right-4 bg-card border border-border shadow-2xl rounded-[32px] p-6 z-50 flex flex-col items-center"
+              >
+                <div className="w-full flex justify-between items-center mb-4">
+                  <h3 className="font-black text-sm uppercase tracking-widest text-primary">Choose Avatar</h3>
+                  <button onClick={() => setShowAvatarPicker(false)} className="h-8 w-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  {MONEY_AVATARS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      onClick={() => {
+                        setCurrentUser({ ...currentUser, avatar: emoji });
+                        toast.success("Profile Avatar Updated!");
+                        setShowAvatarPicker(false);
+                      }}
+                      className={cn(
+                        "text-3xl h-16 rounded-2xl flex items-center justify-center hover:scale-110 hover:bg-primary/10 transition-all",
+                        currentUser.avatar === emoji ? "bg-primary/20 border-2 border-primary" : "bg-muted"
+                      )}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <h2 className="mt-4 text-2xl font-black tracking-tight">{currentUser.name}</h2>
           <div className="mt-1 flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 border border-primary/20">
             <p className="text-[10px] font-black uppercase text-primary tracking-widest">{currentUser.trustLevel} Tier</p>
