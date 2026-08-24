@@ -369,18 +369,45 @@ export function useAppData() {
       };
     }
 
-    // Default response for other IDs
-    return {
-      vpa,
-      registeredName: vpa.split('@')[0].replace(/\./g, ' ').toUpperCase(),
-      bankName: "Axis Bank",
-      kycBadge: "Aadhar Verified",
-      heritageScore: "Active since 2022",
-      transactionIntegrity: "High Volume (verified)",
-      communitySafety: "Zero Fraud Reports",
-      trustLevel: "verified",
-      riskScore: 12
-    };
+    try {
+      // Fetch real-time deterministic data using an open source API based on the UPI ID (seed)
+      const response = await fetch(`https://randomuser.me/api/?seed=${encodeURIComponent(vpa)}`);
+      const data = await response.json();
+      const user = data.results[0];
+
+      // Generate dynamic risk score and stats based on the deterministic API data
+      const rawScore = (user.dob.age * 7 + user.registered.age * 13) % 100;
+      
+      let trustLevel: "trusted" | "verified" | "suspicious" | "flagged" = "verified";
+      if (rawScore < 20) trustLevel = "trusted";
+      else if (rawScore > 80) trustLevel = "flagged";
+      else if (rawScore > 50) trustLevel = "suspicious";
+
+      return {
+        vpa,
+        registeredName: `${user.name.first} ${user.name.last}`.toUpperCase(),
+        bankName: ["HDFC Bank", "ICICI Bank", "SBI", "Axis Bank", "Kotak"][user.dob.age % 5],
+        kycBadge: rawScore < 30 ? "Full Video KYC" : "Aadhar Verified",
+        heritageScore: `Active since ${new Date(user.registered.date).getFullYear()}`,
+        transactionIntegrity: rawScore > 70 ? "Unusual Patterns" : "99.9% Success Rate",
+        communitySafety: rawScore > 80 ? `${(rawScore % 10) + 2} Fraud Reports` : "Zero Fraud Reports",
+        trustLevel,
+        riskScore: rawScore
+      } as VerificationResult;
+    } catch (e) {
+      // Fallback if API fails
+      return {
+        vpa,
+        registeredName: vpa.split('@')[0].replace(/\./g, ' ').toUpperCase(),
+        bankName: "Axis Bank",
+        kycBadge: "Aadhar Verified",
+        heritageScore: "Active since 2022",
+        transactionIntegrity: "High Volume (verified)",
+        communitySafety: "Zero Fraud Reports",
+        trustLevel: "verified",
+        riskScore: 12
+      } as VerificationResult;
+    }
   };
 
   return { currentUser, users, transactions, fraudAlerts, rewards, login, loginByPhone, register, logout, sendMoney, sendExternalMoney, receiveMoney, setCurrentUser, scratchReward, verifyVpa };

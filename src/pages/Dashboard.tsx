@@ -127,7 +127,14 @@ const Dashboard = () => {
       case "security": return <SecurityCenter />;
       case "history": return <TransactionHistory />;
       case "alerts": return <FraudAlerts />;
-      case "contacts": return <ContactsHub onBack={() => setActiveTab("wallet")} />;
+      case "contacts": return <ContactsHub 
+          onBack={() => setActiveTab("wallet")} 
+          onSelectContact={(upiId, name) => {
+              setScannedUpi(upiId);
+              setScannedName(name);
+              setActiveTab("upi");
+          }} 
+      />;
       case "savings": return <SavingsWallet onBack={() => setActiveTab("wallet")} />;
       case "settings": return <ProfileSettings />;
     }

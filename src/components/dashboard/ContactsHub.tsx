@@ -36,14 +36,13 @@ const MOCK_CONTACTS: Contact[] = [
 
 interface ContactsHubProps {
     onBack?: () => void;
+    onSelectContact?: (upiId: string, name: string) => void;
 }
 
-const ContactsHub = ({ onBack }: ContactsHubProps) => {
+const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
-  const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [chatMessage, setChatMessage] = useState("");
   const { currentUser, sendMoney, sendExternalMoney } = useApp();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -155,137 +154,7 @@ const ContactsHub = ({ onBack }: ContactsHubProps) => {
     );
   }
 
-  if (activeContact) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -30 }}
-        className="flex flex-col h-[calc(100vh-140px)] md:h-[75vh] bg-card rounded-[40px] overflow-hidden border border-border shadow-2xl relative"
-      >
-        {/* PhonePe Style Chat Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between bg-card/80 backdrop-blur-xl z-20">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setActiveContact(null)} className="h-10 w-10 flex items-center justify-center rounded-2xl hover:bg-muted transition-colors mr-1">
-              <ArrowLeft className="h-6 w-6" />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center font-black text-primary border border-primary/20 shadow-inner">
-                {activeContact.avatar}
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-base font-black truncate">{activeContact.name}</h3>
-                <div className="flex items-center gap-1.5">
-                    <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                    <p className="text-[10px] font-mono font-bold text-muted-foreground">{activeContact.upiId}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="rounded-2xl h-10 w-10 text-muted-foreground">
-              <Phone className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-2xl h-10 w-10 text-muted-foreground">
-              <History className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-2xl h-10 w-10 text-muted-foreground">
-              <MoreVertical className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
 
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide bg-gradient-to-b from-muted/20 to-card">
-          <div className="flex flex-col items-center gap-2 mb-8 mt-2">
-             <div className="flex items-center gap-1.5 px-4 py-1.5 bg-background/50 border border-border/50 rounded-full shadow-sm">
-                <ShieldCheck className="h-3 w-3 text-success" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Januin AI Verified</span>
-             </div>
-             <p className="text-[10px] text-muted-foreground font-bold italic">This contact is trusted and frequently paid by you.</p>
-          </div>
-
-          <div className="flex flex-col gap-6">
-             {/* Incoming Message Body */}
-             <div className="flex flex-col gap-1 max-w-[85%]">
-                <div className="bg-muted p-4 rounded-3xl rounded-bl-none shadow-sm">
-                  <p className="text-sm font-semibold leading-relaxed">Hey Aman! The lunch bill was ₹850 today. Can you split your share?</p>
-                </div>
-                <span className="text-[9px] font-black text-muted-foreground ml-3 uppercase">12:30 PM • DELIVERED</span>
-             </div>
-
-             {/* Outgoing Transaction Bubble */}
-             <div className="flex flex-col items-end gap-1">
-                <div className="gradient-primary p-5 rounded-[32px] rounded-br-none shadow-glow flex flex-col gap-3 max-w-[90%]">
-                   <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center border border-white/10">
-                         <ShieldCheck className="h-7 w-7 text-white" />
-                      </div>
-                      <div>
-                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Payment Successful</p>
-                         <h2 className="text-2xl font-black text-white flex items-center tabular-nums">
-                            <span className="text-lg mr-1">₹</span>425.00
-                         </h2>
-                      </div>
-                   </div>
-                   <div className="pt-3 border-t border-white/10 flex justify-between items-center text-[9px] font-bold text-white/60">
-                      <span>Ref: #TXN{Math.floor(Math.random() * 888888)}</span>
-                      <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> SECURE</span>
-                   </div>
-                </div>
-                <span className="text-[9px] font-black text-muted-foreground mr-3 uppercase">12:32 PM • SUCCESS</span>
-             </div>
-
-             {/* AI Guard Notification */}
-             <div className="flex justify-center">
-                <div className="bg-success/5 border border-success/20 rounded-2xl px-6 py-3 flex items-center gap-3 max-w-sm">
-                   <Shield className="h-4 w-4 text-success shrink-0" />
-                   <p className="text-[10px] font-black text-success/80">Januin AI Guard: Transaction verified via behavioral biometrics.</p>
-                </div>
-             </div>
-          </div>
-        </div>
-
-        {/* Chat Footer - Stick it to bottom */}
-        <div className="p-4 bg-card border-t border-border flex items-center gap-3">
-           <Button variant="outline" size="icon" className="h-14 w-14 rounded-2xl border-2 border-border/50 shrink-0 hover:bg-muted">
-              <Plus className="h-6 w-6" />
-           </Button>
-           <div className="relative flex-1">
-              <Input 
-                placeholder="Message or amount..." 
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
-                className="h-14 rounded-2xl bg-muted/30 border-none font-bold pl-4 pr-12 focus-visible:ring-1"
-              />
-              <button 
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-primary hover:scale-110 transition-transform disabled:opacity-30"
-                disabled={!chatMessage}
-                onClick={() => {
-                   toast.success("Message sent securely");
-                   setChatMessage("");
-                }}
-              >
-                <Send className="h-6 w-6 fill-current" />
-              </button>
-           </div>
-           <Button 
-            className="h-14 px-8 rounded-2xl font-black gradient-primary shadow-glow transition-transform active:scale-95"
-            onClick={() => {
-                const toastId = toast.loading(`Transferring to ${activeContact.name}...`);
-                setTimeout(() => {
-                    sendExternalMoney(activeContact.upiId, 50);
-                    toast.dismiss(toastId);
-                    toast.success(`Success! ₹50 paid to ${activeContact.upiId}`);
-                }, 1500);
-            }}
-           >
-              PAY
-           </Button>
-        </div>
-      </motion.div>
-    );
-  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -345,7 +214,7 @@ const ContactsHub = ({ onBack }: ContactsHubProps) => {
             <button 
                 onClick={() => {
                     const newC = { id: Date.now().toString(), name: searchQuery, phone: searchQuery, upiId: `${searchQuery}@januin`, avatar: "#", riskScore: 50 };
-                    setActiveContact(newC);
+                    onSelectContact?.(newC.upiId, newC.name);
                 }}
                 className="w-full flex items-center justify-between p-6 rounded-[32px] bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 shadow-sm"
             >
@@ -377,7 +246,7 @@ const ContactsHub = ({ onBack }: ContactsHubProps) => {
                 {MOCK_CONTACTS.filter(c => c.isFavorite).map(contact => (
                 <button 
                     key={contact.id} 
-                    onClick={() => setActiveContact(contact)}
+                    onClick={() => onSelectContact?.(contact.upiId, contact.name)}
                     className="flex flex-col items-center gap-3 shrink-0 group"
                 >
                     <div className="relative">
@@ -402,7 +271,7 @@ const ContactsHub = ({ onBack }: ContactsHubProps) => {
            {filteredContacts.length > 0 ? filteredContacts.map((contact) => (
               <button 
                 key={contact.id} 
-                onClick={() => setActiveContact(contact)}
+                onClick={() => onSelectContact?.(contact.upiId, contact.name)}
                 className="w-full flex items-center justify-between p-4 rounded-[28px] bg-card border border-border hover:border-primary/30 transition-all hover:shadow-xl active:scale-[0.98] text-left group overflow-hidden relative"
               >
                 <div className="flex items-center gap-4 relative z-10">
