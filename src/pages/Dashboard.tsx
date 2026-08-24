@@ -223,7 +223,12 @@ const Dashboard = () => {
               </div>
             )}
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative h-9 w-9 text-muted-foreground">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative h-9 w-9 text-muted-foreground"
+              onClick={() => setActiveTab("alerts")}
+            >
               <Bell className="h-5 w-5" />
               {unresolvedAlertsCount > 0 && (
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger" />
@@ -301,8 +306,16 @@ const Dashboard = () => {
               </div>
 
               <ThemeToggle />
-              <Button variant="outline" size="icon" className="rounded-full shadow-sm">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full shadow-sm relative"
+                onClick={() => setActiveTab("alerts")}
+              >
                 <Bell className="h-4 w-4" />
+                {unresolvedAlertsCount > 0 && (
+                  <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-danger" />
+                )}
               </Button>
             </div>
           </div>
