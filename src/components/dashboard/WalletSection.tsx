@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Wallet, ArrowUpRight, ArrowDownLeft, TrendingUp, Globe, 
+  Wallet, ArrowUpRight, ArrowDownLeft, Globe, 
   ScanLine, Send, Landmark, Plus, ShieldAlert,
-  ShieldCheck, ArrowRight, Wallet2, Smartphone, Zap, Tv, Home, Shield, Heart, Star, Lock, History, PiggyBank
+  ShieldCheck, ArrowRight, Wallet2, Smartphone, Zap, Tv, Home, Shield, Lock, History, PiggyBank
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -26,13 +26,12 @@ const WalletSection = ({
   safetyLevel = 100,
   isAnalyzing = false
 }: WalletSectionProps) => {
-  const { currentUser, transactions, fraudAlerts } = useApp();
+  const { currentUser, transactions } = useApp();
   const [balanceState, setBalanceState] = useState<"hidden" | "pin" | "visible">("hidden");
   const [pin, setPin] = useState("");
 
   if (!currentUser) return null;
 
-  const unresolvedAlerts = fraudAlerts.filter(a => !a.resolved);
   const userTx = transactions.filter(t => t.senderId === currentUser.id || t.receiverId === currentUser.id);
   const sent = userTx.filter(t => t.senderId === currentUser.id).reduce((s, t) => s + t.amount, 0);
   const received = userTx.filter(t => t.receiverId === currentUser.id).reduce((s, t) => s + t.amount, 0);
@@ -50,25 +49,19 @@ const WalletSection = ({
   };
 
   const quickActions = [
-    { id: "scan", label: "Scan QR", icon: ScanLine, color: "bg-blue-500", action: onScanClick },
-    { id: "send", label: "To Contact", icon: Send, color: "bg-purple-500", action: onContactClick },
-    { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-orange-500" },
-    { id: "savings", label: "Savings/EPF", icon: PiggyBank, color: "bg-emerald-500", action: onSavingsClick },
+    { id: "scan", label: "Scan QR", icon: ScanLine, color: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/40 border border-blue-400/30", action: onScanClick },
+    { id: "send", label: "To Contact", icon: Send, color: "bg-gradient-to-br from-purple-400 to-indigo-600 shadow-indigo-500/40 border border-purple-400/30", action: onContactClick },
+    { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/40 border border-orange-400/30" },
+    { id: "savings", label: "Savings/EPF", icon: PiggyBank, color: "bg-gradient-to-br from-emerald-400 to-teal-600 shadow-emerald-500/40 border border-emerald-400/30", action: onSavingsClick },
   ];
 
   const billActions = [
-    { id: "recharge", label: "Mobile Recharge", icon: Smartphone, color: "text-blue-500 bg-blue-50" },
-    { id: "electricity", label: "Electricity", icon: Zap, color: "text-amber-500 bg-amber-50" },
-    { id: "dth", label: "DTH / Cable", icon: Tv, color: "text-purple-500 bg-purple-50" },
-    { id: "rent", label: "Rent", icon: Home, color: "text-emerald-500 bg-emerald-50" },
+    { id: "recharge", label: "Mobile", icon: Smartphone, color: "text-blue-600 bg-blue-50/80 border-blue-100/50 shadow-blue-500/10 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20" },
+    { id: "electricity", label: "Power", icon: Zap, color: "text-amber-600 bg-amber-50/80 border-amber-100/50 shadow-amber-500/10 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20" },
+    { id: "dth", label: "DTH/TV", icon: Tv, color: "text-purple-600 bg-purple-50/80 border-purple-100/50 shadow-purple-500/10 dark:text-purple-400 dark:bg-purple-500/10 dark:border-purple-500/20" },
+    { id: "rent", label: "Rent", icon: Home, color: "text-emerald-600 bg-emerald-50/80 border-emerald-100/50 shadow-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20" },
   ];
 
-  const investActions = [
-    { id: "bike", label: "Bike Insurance", icon: Shield, color: "text-indigo-500 bg-indigo-50" },
-    { id: "health", label: "Health", icon: Heart, color: "text-red-500 bg-red-50" },
-    { id: "sip", label: "Mutual Funds", icon: TrendingUp, color: "text-success bg-success/10" },
-    { id: "memberships", label: "Memberships", icon: Star, color: "text-orange-500 bg-orange-50" },
-  ];
 
   return (
     <div className="space-y-6">
@@ -132,7 +125,7 @@ const WalletSection = ({
                 action.color
               )}>
                 <div className="absolute inset-0 bg-white/20 rounded-[1.25rem] opacity-0 group-hover:opacity-100 transition-opacity" />
-                <action.icon className="relative z-10 h-6 w-6 md:h-7 md:w-7 drop-shadow-sm" />
+                <action.icon strokeWidth={1.5} className="relative z-10 h-6 w-6 md:h-7 md:w-7 drop-shadow-sm" />
               </div>
               <span className="text-xs md:text-sm font-semibold text-center leading-tight text-foreground/80 group-hover:text-primary transition-colors">{action.label}</span>
             </motion.button>
@@ -147,8 +140,8 @@ const WalletSection = ({
           <div className="grid grid-cols-4 gap-2">
             {billActions.map((action, i) => (
                 <button key={action.id} className="flex flex-col items-center gap-3 group">
-                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-sm border border-border/50 group-active:scale-95", action.color)}>
-                      <action.icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
+                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-md backdrop-blur-sm border group-active:scale-95", action.color)}>
+                      <action.icon strokeWidth={1.5} className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <span className="text-xs font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
                 </button>
@@ -160,25 +153,6 @@ const WalletSection = ({
         </div>
       </div>
 
-      {/* Insurance & Investments */}
-      <div>
-        <div className="flex items-center justify-between ml-2 mb-3">
-           <h3 className="text-xs font-black uppercase text-muted-foreground tracking-widest">Insurance & Invest</h3>
-           <div className="px-2 py-0.5 rounded-full bg-success/10 text-success text-[8px] font-black uppercase border border-success/20">Tax Saving</div>
-        </div>
-        <div className="rounded-3xl border border-border bg-card p-4 shadow-sm">
-          <div className="grid grid-cols-4 gap-2">
-            {investActions.map((action, i) => (
-                <button key={action.id} className="flex flex-col items-center gap-3 group">
-                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-sm border border-border/50 group-active:scale-95", action.color)}>
-                      <action.icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
-                  </div>
-                  <span className="text-xs font-semibold text-center leading-tight text-muted-foreground group-hover:text-foreground line-clamp-2">{action.label}</span>
-                </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Unified Bank Account Card with PIN */}
       <motion.div
@@ -189,8 +163,8 @@ const WalletSection = ({
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 flex items-center justify-center bg-white rounded-xl shadow-inner text-primary">
-                 <Landmark className="h-6 w-6" />
+              <div className="h-10 w-10 flex items-center justify-center bg-white/10 rounded-xl shadow-inner text-white border border-white/20 backdrop-blur-md">
+                 <Landmark strokeWidth={1.5} className="h-6 w-6" />
               </div>
               <div>
                 <h4 className="font-bold text-sm tracking-tight text-white/90">Januin Bank Ltd.</h4>
@@ -249,23 +223,6 @@ const WalletSection = ({
         <div className="absolute -left-12 -bottom-12 h-40 w-40 rounded-full bg-white/5 blur-3xl pointer-events-none" />
       </motion.div>
 
-      {/* AI Fraud Alerts Card - If any */}
-      {unresolvedAlerts.length > 0 && (
-        <motion.div
-           initial={{ opacity: 0, x: -20 }}
-           animate={{ opacity: 1, x: 0 }}
-           className="rounded-3xl border border-danger/30 bg-gradient-to-r from-danger/10 to-transparent p-4 flex items-center gap-4"
-        >
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-danger shadow-lg shadow-danger/20 text-white">
-            <ShieldAlert className="h-6 w-6" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-sm font-black text-danger">AI Fraud Warning</h3>
-            <p className="text-xs text-muted-foreground font-medium">{unresolvedAlerts[0].reason}</p>
-          </div>
-          <Button size="sm" className="rounded-xl bg-danger hover:bg-danger/90 text-[10px] font-black uppercase">Review</Button>
-        </motion.div>
-      )}
 
       {/* Check Recent Activity Banner */}
       <div className="rounded-3xl border border-border bg-card p-4 shadow-sm flex items-center justify-between cursor-pointer hover:bg-card/80 transition-colors">
