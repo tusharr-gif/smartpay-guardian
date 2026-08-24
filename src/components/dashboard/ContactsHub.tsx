@@ -43,12 +43,21 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [syncedContacts, setSyncedContacts] = useState<Contact[]>([]);
   const { currentUser, sendMoney, sendExternalMoney } = useApp();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("januin_contacts_permission");
-    if (saved === "granted") setPermissionGranted(true);
+    if (saved === "granted") {
+        setPermissionGranted(true);
+        const savedContacts = localStorage.getItem("januin_synced_contacts");
+        if (savedContacts) {
+            try {
+                setSyncedContacts(JSON.parse(savedContacts));
+            } catch (e) {}
+        }
+    }
   }, []);
 
   useEffect(() => {
@@ -61,6 +70,7 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
     if (!('contacts' in navigator && (navigator as any).contacts?.select)) {
         toast.error("Contact Picker not supported in this browser. Showing mock contacts.");
         setPermissionGranted(true);
+        localStorage.setItem("januin_contacts_permission", "granted");
         return;
     }
 
@@ -75,12 +85,15 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
                 id: `real-${i}`,
                 name: c.name?.[0] || 'Unknown',
                 phone: c.tel?.[0]?.replace(/\s/g, '') || '',
-                upiId: `${c.tel?.[0]?.replace(/\s/g, '') || 'user'}@upi`,
+                upiId: `${c.tel?.[0]?.replace(/\s/g, '') || 'user'}@januin`,
                 avatar: (c.name?.[0] || 'U').substring(0, 1).toUpperCase(),
-                riskScore: Math.floor(Math.random() * 30)
+                riskScore: Math.floor(Math.random() * 30),
+                isFavorite: i < 3 // Make first few favorites
             }));
-            // MOCK_CONTACTS.length = 0; // Not allowed to mutate const, but we can set state
-            toast.success(`Synced ${contacts.length} contacts!`);
+            
+            setSyncedContacts(mapped);
+            localStorage.setItem("januin_synced_contacts", JSON.stringify(mapped));
+            toast.success(`Synced ${contacts.length} real contacts!`);
             setPermissionGranted(true);
             localStorage.setItem("januin_contacts_permission", "granted");
         }
@@ -97,7 +110,9 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
     }, 1000);
   };
 
-  const filteredContacts = MOCK_CONTACTS.filter(c => 
+  const activeContacts = syncedContacts.length > 0 ? syncedContacts : MOCK_CONTACTS;
+
+  const filteredContacts = activeContacts.filter(c => 
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     c.phone.includes(searchQuery)
   );
@@ -243,7 +258,7 @@ const ContactsHub = ({ onBack, onSelectContact }: ContactsHubProps) => {
                 <Button variant="link" className="text-[10px] font-black uppercase h-auto p-0 text-primary">View All History</Button>
             </div>
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide px-1">
-                {MOCK_CONTACTS.filter(c => c.isFavorite).map(contact => (
+                {activeContacts.filter(c => c.isFavorite).map(contact => (
                 <button 
                     key={contact.id} 
                     onClick={() => onSelectContact?.(contact.upiId, contact.name)}
