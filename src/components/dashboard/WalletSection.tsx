@@ -16,6 +16,7 @@ interface WalletSectionProps {
   onContactClick: () => void;
   onSavingsClick: () => void;
   onBankClick?: () => void;
+  onBillsClick?: () => void;
   safetyLevel?: number;
   isAnalyzing?: boolean;
 }
@@ -25,6 +26,7 @@ const WalletSection = ({
   onContactClick, 
   onSavingsClick,
   onBankClick,
+  onBillsClick,
   safetyLevel: propSafetyLevel = 100,
   isAnalyzing = false
 }: WalletSectionProps) => {
@@ -63,10 +65,10 @@ const WalletSection = ({
   ];
 
   const billActions = [
-    { id: "recharge", label: "Mobile", icon: Smartphone, color: "text-blue-600 bg-blue-50/80 border-blue-100/50 shadow-blue-500/10 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20" },
-    { id: "electricity", label: "Power", icon: Zap, color: "text-amber-600 bg-amber-50/80 border-amber-100/50 shadow-amber-500/10 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20" },
-    { id: "dth", label: "DTH/TV", icon: Tv, color: "text-purple-600 bg-purple-50/80 border-purple-100/50 shadow-purple-500/10 dark:text-purple-400 dark:bg-purple-500/10 dark:border-purple-500/20" },
-    { id: "rent", label: "Rent", icon: Home, color: "text-emerald-600 bg-emerald-50/80 border-emerald-100/50 shadow-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20" },
+    { id: "recharge", label: "Mobile", icon: Smartphone, color: "text-blue-600 bg-blue-50/80 border-blue-100/50 shadow-blue-500/10 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20", action: onBillsClick },
+    { id: "electricity", label: "Power", icon: Zap, color: "text-amber-600 bg-amber-50/80 border-amber-100/50 shadow-amber-500/10 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20", action: onBillsClick },
+    { id: "dth", label: "DTH/TV", icon: Tv, color: "text-purple-600 bg-purple-50/80 border-purple-100/50 shadow-purple-500/10 dark:text-purple-400 dark:bg-purple-500/10 dark:border-purple-500/20", action: onBillsClick },
+    { id: "rent", label: "Rent", icon: Home, color: "text-emerald-600 bg-emerald-50/80 border-emerald-100/50 shadow-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20", action: onBillsClick },
   ];
 
 
@@ -146,7 +148,11 @@ const WalletSection = ({
         <div className="rounded-3xl border border-border bg-card p-4 shadow-sm">
           <div className="grid grid-cols-4 gap-2">
             {billActions.map((action, i) => (
-                <button key={action.id} className="flex flex-col items-center gap-3 group">
+                <button 
+                  key={action.id} 
+                  onClick={() => action.action?.()}
+                  className="flex flex-col items-center gap-3 group"
+                >
                   <div className={cn("flex h-14 w-14 items-center justify-center rounded-[1.25rem] transition-all duration-300 group-hover:-translate-y-1 shadow-md backdrop-blur-sm border group-active:scale-95", action.color)}>
                       <action.icon strokeWidth={1.5} className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                   </div>

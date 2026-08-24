@@ -116,6 +116,7 @@ const Dashboard = () => {
           onScanClick={() => setShowScanner(true)} 
           onContactClick={() => setActiveTab("contacts")} 
           onBankClick={() => setActiveTab("upi")}
+          onBillsClick={() => setActiveTab("bills")}
           onSavingsClick={() => setActiveTab("savings")}
           safetyLevel={globalSafetyLevel}
           isAnalyzing={isAnalyzing}
