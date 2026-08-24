@@ -229,7 +229,12 @@ const Dashboard = () => {
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger" />
               )}
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9 text-muted-foreground"
+              onClick={() => setActiveTab("contacts")}
+            >
               <Search className="h-5 w-5" />
             </Button>
           </div>
