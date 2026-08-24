@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Bot, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,9 @@ export const Chatbot = () => {
 
   const generateResponse = (text: string) => {
     const lowerText = text.toLowerCase();
+    if (lowerText.includes("help") || lowerText.includes("support") || lowerText.includes("contact")) {
+      return "For any assistance, you can reach out to our 24/7 Help Center! 📧 Email us at: jenuinepay@gmail.com or call our toll-free number: 1800-JANUIN-PAY.";
+    }
     if (lowerText.includes("scan") || lowerText.includes("qr")) {
       return "To scan a QR code, just click the 'Scan QR' button on your My Wallet dashboard. Our AI Guardian will automatically analyze the QR for any fraud risks before you pay!";
     }
@@ -51,7 +54,7 @@ export const Chatbot = () => {
     if (lowerText.includes("jasssss") || lowerText.includes("tushar")) {
       return "Yes! I am JASSSSS, your AI assistant crafted by Master Tushar. I'm here to guide you through this awesome project!";
     }
-    return "I am JASSSSS, your virtual assistant. You can ask me about scanning QRs, checking fraud alerts, sending money, or viewing your wallet features!";
+    return "I am JASSSSS, your virtual assistant. You can ask me about scanning QRs, checking fraud alerts, sending money, viewing your wallet, or type 'help' to contact support!";
   };
 
   const handleSend = () => {
