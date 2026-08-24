@@ -63,9 +63,7 @@ const UPIHub = ({ initialUpiId = "", initialPayeeName = "", onContactClick }: UP
                 try {
                     const result = await verifyVpa(upiInput);
                     setVerificationResult(result);
-                    if (!payeeName) {
-                        setPayeeName(result.registeredName);
-                    }
+                    setPayeeName(result.registeredName);
                     
                     // Live Notifications for manual entry
                     if (result.riskScore < 20) {
