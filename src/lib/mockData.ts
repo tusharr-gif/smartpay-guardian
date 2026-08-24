@@ -376,7 +376,18 @@ export function useAppData() {
       const user = data.results[0];
 
       // Generate dynamic risk score and stats based on the deterministic API data
-      const rawScore = (user.dob.age * 7 + user.registered.age * 13) % 100;
+      let rawScore = (user.dob.age * 7 + user.registered.age * 13) % 100;
+      
+      // Scale down normal score to be strictly safe (0 to 35) for presentations!
+      rawScore = rawScore % 35;
+      
+      const lowerVpa = vpa.toLowerCase();
+      // Only show risky for explicitly testing keywords
+      if (lowerVpa.includes("fraud") || lowerVpa.includes("scam") || lowerVpa.includes("spam") || lowerVpa.includes("risk")) {
+         rawScore = 85 + (rawScore % 10);
+      } else if (lowerVpa.includes("unknown") || lowerVpa.includes("test")) {
+         rawScore = 60 + (rawScore % 15);
+      }
       
       let trustLevel: "trusted" | "verified" | "suspicious" | "flagged" = "verified";
       if (rawScore < 20) trustLevel = "trusted";
