@@ -115,6 +115,7 @@ const Dashboard = () => {
         <WalletSection 
           onScanClick={() => setShowScanner(true)} 
           onContactClick={() => setActiveTab("contacts")} 
+          onBankClick={() => setActiveTab("upi")}
           onSavingsClick={() => setActiveTab("savings")}
           safetyLevel={globalSafetyLevel}
           isAnalyzing={isAnalyzing}

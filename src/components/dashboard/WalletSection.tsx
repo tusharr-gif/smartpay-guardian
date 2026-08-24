@@ -15,6 +15,7 @@ interface WalletSectionProps {
   onScanClick: () => void;
   onContactClick: () => void;
   onSavingsClick: () => void;
+  onBankClick?: () => void;
   safetyLevel?: number;
   isAnalyzing?: boolean;
 }
@@ -23,12 +24,18 @@ const WalletSection = ({
   onScanClick, 
   onContactClick, 
   onSavingsClick,
-  safetyLevel = 100,
+  onBankClick,
+  safetyLevel: propSafetyLevel = 100,
   isAnalyzing = false
 }: WalletSectionProps) => {
   const { currentUser, transactions } = useApp();
   const [balanceState, setBalanceState] = useState<"hidden" | "pin" | "visible">("hidden");
   const [pin, setPin] = useState("");
+  const [safetyLevel, setSafetyLevel] = useState(propSafetyLevel);
+
+  useEffect(() => {
+    setSafetyLevel(propSafetyLevel);
+  }, [propSafetyLevel]);
 
   if (!currentUser) return null;
 
@@ -51,7 +58,7 @@ const WalletSection = ({
   const quickActions = [
     { id: "scan", label: "Scan QR", icon: ScanLine, color: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/40 border border-blue-400/30", action: onScanClick },
     { id: "send", label: "To Contact", icon: Send, color: "bg-gradient-to-br from-purple-400 to-indigo-600 shadow-indigo-500/40 border border-purple-400/30", action: onContactClick },
-    { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/40 border border-orange-400/30" },
+    { id: "bank", label: "To Bank/UPI", icon: Landmark, color: "bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/40 border border-orange-400/30", action: onBankClick },
     { id: "savings", label: "Savings/EPF", icon: PiggyBank, color: "bg-gradient-to-br from-emerald-400 to-teal-600 shadow-emerald-500/40 border border-emerald-400/30", action: onSavingsClick },
   ];
 
